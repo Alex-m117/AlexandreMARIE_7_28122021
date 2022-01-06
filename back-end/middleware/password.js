@@ -13,7 +13,7 @@ passwordSchema
 .is().not().oneOf(['Passw0rd', 'Password123']); // Blacklist these values
 
 module.exports = (req, res,next) => {
-	if(passwordSchema.validate(req.body.password)){
+	if(passwordSchema.validate(req.body.user_password)){
 		next();
 	}
 	else{

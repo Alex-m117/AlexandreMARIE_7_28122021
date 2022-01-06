@@ -8,7 +8,7 @@ const auth = require ('../middleware/auth');
 const multer = require ('../middleware/multer-config');
 const userControl = require ('../controllers/user');
 
-//router.post ('/signup', email, password, userControl.signup);
+router.post ('/signup', email, password, userControl.signup);
 //router.post ('/login', userControl.login);
 //router.get ('/accounts', auth, userControl.getAllUsers);
 //router.put ('/accounts/:id', auth, multer, userControl.updateAccount);

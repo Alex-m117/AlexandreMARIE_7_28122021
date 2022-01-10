@@ -9,10 +9,9 @@ const multer = require ('../middleware/multer-config');
 const userControl = require ('../controllers/user');
 
 router.post ('/signup', email, password, userControl.signup);
-//router.post ('/login', userControl.login);
-//router.get ('/accounts', auth, userControl.getAllUsers);
-//router.put ('/accounts/:id', auth, multer, userControl.updateAccount);
-//router.get ('/accounts/:id', auth,userControl.getAccount );
-//router.delete ('/accounts/:id', auth, userControl.deleteAccount);
+router.post ('/login', userControl.login);
+router.get ('/account/:id', auth,userControl.getAccount );
+router.put ('/account/:id', auth, multer, userControl.updateAccount);
+router.delete ('/account/:id', auth, userControl.deleteAccount);
 
 module.exports = router;

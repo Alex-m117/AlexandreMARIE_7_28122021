@@ -93,8 +93,8 @@ exports.getAccount = (req, res, next) => {
 };
 
 exports.updateAccount = (req, res, next) => {
+  
   const { id } = req.params;
-
   // Modification / Ajout de la photo de profil.
   if(req.file) {
     const account = `SELECT * FROM users WHERE id = ?`;

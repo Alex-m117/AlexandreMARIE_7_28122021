@@ -23,7 +23,8 @@ exports.signup = async (req, res, next) => {
           console.log(err)  
         };
         if (result.length > 0) {
-          return res.status(403).json ({ message: 'Erreur: email deja utilisée !' });  
+          res.status(403).json ({ message: 'Erreur: email deja utilisée !' });
+          return;
         };
 
     const sql = `INSERT INTO users SET ?`;
@@ -32,7 +33,8 @@ exports.signup = async (req, res, next) => {
           console.log(err)   
         }
         else {
-          return res.status(201).json ({ message: 'Utilisateur créé et sauvegardé !' });
+          res.status(201).json ({ message: 'Utilisateur créé et sauvegardé !' });
+          return;
         }
       });
       });
@@ -47,19 +49,22 @@ exports.login = (req, res, next) => {
     const { email, password } = req.body;
 
       if(email === null || password === null) {
-        return res.status(201).json ({ message: 'Informations incorrectes !' });
+        res.status(201).json ({ message: 'Informations incorrectes !' });
+        return;
       };
     
     const selectEmail = `SELECT * FROM users WHERE email = ?`;
       data.query(selectEmail, [email], (err, results) => {
         if (!results[0])  {
-          return res.status(403).json ({ message: "Erreur: L'email est incorrect !" }); 
+          res.status(403).json ({ message: "Erreur: L'email est incorrect !" });
+          return;
         };
    
         bcrypt.compare(password, results[0].password)
         .then(user => {
           if (!user) {
-            return res.status(403).json ({ error: "Erreur: Mot de passe incorrect !" });
+            res.status(403).json ({ error: "Erreur: Mot de passe incorrect !" });
+            return;
           };
 
           res.status(200).json ({
@@ -67,7 +72,7 @@ exports.login = (req, res, next) => {
             token: jwt.sign(
             { userId: results[0].id },
             `${process.env.JWT_KEY_TOKEN}`,
-            { expiresIn: "2h" }
+            { expiresIn: "5h" }
             )  
           });         
         })
@@ -84,7 +89,8 @@ exports.getAccount = (req, res, next) => {
   const account = `SELECT * FROM users WHERE id = ?`;
   data.query(account, id,(err, result) => {
     if (err)  {
-      return res.status(404).json ({ message: "Récupération des informations impossible !" }); 
+      res.status(404).json ({ message: "Récupération des informations impossible !" });
+      return;
     }
     if (result[0].id === req.auth.userId) {
       res.status(200).json ({ result }); 
@@ -100,14 +106,19 @@ exports.updateAccount = (req, res, next) => {
     const account = `SELECT * FROM users WHERE id = ?`;
     data.query(account, id,(err, result) => {
       if (err)  {
-        return res.status(404).json ({ message: "Récupération des informations impossible !" }); 
+        res.status(404).json ({ message: "Récupération des informations impossible !" });
+        return;
       }
       if (result[0].id === req.auth.userId) {
         if(result[0].image || null) {
           const split = result[0].image.split('/images/')[1];
           fs.unlink(`images/${split}`, () => {
-            if (err) console.log(err);
-            else console.log('Image supprimée !');
+            if (err) {
+              console.log(err); 
+            }
+            else {
+              res.status(200).json ({ message: "Image supprimée." });
+          };
           })
         };
       };
@@ -115,9 +126,12 @@ exports.updateAccount = (req, res, next) => {
       const updateImage = `UPDATE users SET image = ? WHERE id = ?`;
       data.query(updateImage, [image, id],  (err, result) => {
         if (err) {
-          return res.status(404).json ({ message: "Impossible de mettre à jour l'image utilisateur, vérifier le format." });
-        }; 
-          return res.status(201).json ({ message: "Image de profil mise à jour !" }); 
+           res.status(404).json ({ message: "Impossible de mettre à jour l'image utilisateur, vérifier le format." });
+           return;
+        };
+        if (result)
+          res.status(201).json ({ message: "Image de profil mise à jour !" });
+          return;
       });
     });
   };
@@ -129,7 +143,8 @@ exports.updateAccount = (req, res, next) => {
       data.query(changePseudo, [pseudo, id],(err, result) => {
         if (req.params.id == req.auth.userId) {
           if (err)  {     
-            return res.status(404).json ({ message: "Impossible de changer votre Pseudo !" }); 
+            res.status(404).json ({ message: "Impossible de changer votre Pseudo !" });
+            return;
           }; 
         };
       });
@@ -139,12 +154,13 @@ exports.updateAccount = (req, res, next) => {
       data.query(changeBiography, [biography, id],(err, result) => {
         if (req.params.id == req.auth.userId) {
           if (err)  {     
-            return res.status(404).json ({ message: "Impossible de changer votre Biographie !" }); 
+            res.status(404).json ({ message: "Impossible de changer votre Biographie !" });
+            return;
           };
         };
       });
     };
-    res.status(201).json ({ message: "Vos modifications ont bien étaient prises en compte !" }); 
+      res.status(201).json ({ message: "Vos modifications ont bien étaient prises en compte !" });
 };
 
 exports.deleteAccount = (req, res, next) => {
@@ -153,7 +169,8 @@ exports.deleteAccount = (req, res, next) => {
   const account = `DELETE FROM users WHERE id = ?`;
   data.query(account, id,(err, result) => {
     if (err)  {
-      return res.status(404).json ({ message: "Vous n'êtes pas autorisé à supprimer ce compte !" });
+      res.status(404).json ({ message: "Vous n'êtes pas autorisé à supprimer ce compte !" });
+      return;
     }
     if (req.params.id == req.auth.userId) {
       if (result){

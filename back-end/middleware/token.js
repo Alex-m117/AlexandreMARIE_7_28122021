@@ -1,4 +1,5 @@
 const jwt = require ('jsonwebtoken');
+require('dotenv').config();
 
 function tokenUserId (req) {
     const token = req.headers.authorization.split(' ')[1];

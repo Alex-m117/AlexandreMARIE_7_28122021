@@ -120,3 +120,38 @@ exports.modifyPost = (req, res, next) => {
   })
 };
 
+exports.deletePost = (req, res, next) => {
+
+  const userId = token.tokenUserId(req);
+  const { id } = req.params;
+
+  const post = `SELECT * FROM Posts WHERE id = ?`;
+  data.query(post, id,(err, result) => {
+    if (err)  {
+      return res.status(404).json ({ message: "Récupération des informations impossible !" }); 
+    }
+    if (result[0].userId === req.auth.userId) {
+      if(result[0].image || null) {
+        const split = result[0].image.split('/images/')[1];
+        fs.unlink(`images/${split}`, () => {
+          if (err) console.log(err);
+          else console.log('Image supprimée !');
+        });
+      };
+    }
+    console.log(result)
+    if (req.params.id == result[0].id) {
+      const post = `DELETE FROM Posts WHERE id = ?`;
+      data.query(post, id,(err, result) => {
+        if (err)  {
+          res.status(404).json ({ message: "Vous n'êtes pas autorisé à supprimer ce post !" });
+          return;
+        }
+        if (result) {
+          res.status(404).json ({ message: `Votre post n°${req.params.id} est supprimé !` }); 
+          return;
+        };
+      });
+    };
+  });
+};

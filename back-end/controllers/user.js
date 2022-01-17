@@ -27,8 +27,8 @@ exports.signup = async (req, res, next) => {
           return;
         };
 
-    const sql = `INSERT INTO users SET ?`;
-      data.query(sql, user, (err, result) => {
+    const account = `INSERT INTO users SET ?`;
+      data.query(account, user, (err, result) => {
         if (err) {
           console.log(err)   
         }
@@ -49,11 +49,11 @@ exports.login = (req, res, next) => {
     const { email, password } = req.body;
 
       if(email === null || password === null) {
-        res.status(201).json ({ message: 'Informations incorrectes !' });
+        res.status(200).json ({ message: 'Informations incorrectes !' });
         return;
       };
     
-    const selectEmail = `SELECT * FROM users WHERE email = ?`;
+      const selectEmail = `SELECT * FROM users WHERE email = ?`;
       data.query(selectEmail, [email], (err, results) => {
         if (!results[0])  {
           res.status(403).json ({ message: "Erreur: L'email est incorrect !" });
@@ -85,15 +85,15 @@ exports.login = (req, res, next) => {
 
 exports.getAccount = (req, res, next) => {
 
-  const { id } = req.params;
   const account = `SELECT * FROM users WHERE id = ?`;
   data.query(account, id,(err, result) => {
-    if (err)  {
+    if (err)  { console.log(err) };
+    if (result) {
+      res.status(200).json ({ result }); 
+    }
+    else{
       res.status(404).json ({ message: "Récupération des informations impossible !" });
       return;
-    }
-    if (result[0].id === req.auth.userId) {
-      res.status(200).json ({ result }); 
     };
   });
 };
@@ -101,98 +101,93 @@ exports.getAccount = (req, res, next) => {
 exports.updateAccount = (req, res, next) => {
   
   const { id } = req.params;
-  // Modification / Ajout de la photo de profil.
-  if(req.file) {
+  let imageUrl;
+  if (id == req.auth.userId) {
     const account = `SELECT * FROM users WHERE id = ?`;
     data.query(account, id,(err, result) => {
-      if (err)  {
-        res.status(404).json ({ message: "Récupération des informations impossible !" });
-        return;
-      }
-      if (result[0].id === req.auth.userId) {
-        if(result[0].image) {
+      if (err) { console.log(err) };
+        if(result[0].image || null) {
           const split = result[0].image.split('/images/')[1];
           fs.unlink(`images/${split}`, () => {
-            if (err) {
-              console.log(err); 
-            }
-            else {
-             return res.status(200).json ({ message: "Image supprimée." });
-          };
+            if (err) console.log(err); 
           })
         };
+      });
+    }
+    else{
+      res.status(403).json ({ message: "Modifications non autorisées." });
+      return;
+    }
+    if (id == req.auth.userId) {
+      if(req.file) {
+        imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+      }
+      else {
+        imageUrl = null;
+      }
+        const updateImage = `UPDATE users SET image = ? WHERE id = ?`;
+        data.query(updateImage, [imageUrl, id],  (err, result) => {
+          if (err) { console.log(err) };
+        }); 
+    }
+    else {
+      res.status(403).json ({ message: "Impossible de mettre à jour l'image utilisateur, vérifier le format." });
+      return;
+    };
+    // Modification du pseudo & biographie.
+    const { pseudo, biography } = req.body;
+    if (id == req.auth.userId) {
+      if(pseudo) {
+        const changePseudo = `UPDATE users SET pseudo = ? WHERE id = ?`;
+        data.query(changePseudo, [pseudo, id],(err, result) => {
+          if (err) { console.log(err) };
+        });
       };
-    });
-  const image = (req.file) ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : "";  
-  const updateImage = `UPDATE users SET image = ? WHERE id = ?`;
-  data.query(updateImage, [image, id],  (err, result) => {
-    if (err) {
-      res.status(404).json ({ message: "Impossible de mettre à jour l'image utilisateur, vérifier le format." });
+    }
+    else {
+      res.status(403).json ({ message: "Impossible de changer votre Pseudo !" });
       return;
-    };
-    if (result)
-      res.status(201).json ({ message: "Image de profil mise à jour !" });
+    }
+    if (id == req.auth.userId) { 
+      if(biography) {
+        const changeBiography = `UPDATE users SET biography = ? WHERE id = ?`;
+        data.query(changeBiography, [biography, id],(err, result) => {
+          if (err) { console.log(err) };
+        });
+      };  
+    }          
+    else {
+      res.status(403).json ({ message: "Impossible de changer votre Biographie !" });
       return;
-    });
-    
-  };
-
-  // Modification du pseudo & biographie.
-  const { pseudo, biography } = req.body;
-    if(pseudo) {
-      const changePseudo = `UPDATE users SET pseudo = ? WHERE id = ?`;
-      data.query(changePseudo, [pseudo, id],(err, result) => {
-        if (req.params.id == req.auth.userId) {
-          if (err)  {     
-            res.status(404).json ({ message: "Impossible de changer votre Pseudo !" });
-            return;
-          }; 
-        };
-      });
-    };  
-    if(biography) {
-      const changeBiography = `UPDATE users SET biography = ? WHERE id = ?`;
-      data.query(changeBiography, [biography, id],(err, result) => {
-        if (req.params.id == req.auth.userId) {
-          if (err)  {     
-            res.status(404).json ({ message: "Impossible de changer votre Biographie !" });
-            return;
-          };
-        };
-      });
-    };
+    }
       res.status(201).json ({ message: "Vos modifications ont bien étaient prises en compte !" });
 };
 
 exports.deleteAccount = (req, res, next) => {
 
   const { id } = req.params;
-
+  
   const account = `SELECT * FROM Users WHERE id = ?`;
   data.query(account, id,(err, result) => {
-    if (err)  {
-      return res.status(404).json ({ message: "Récupération des informations impossible !" }); 
-    }
-    if (result[0].id === req.auth.userId) {
+    if (id == req.auth.userId) {  
+      if (err) { console.log(err) };
       if(result[0].image || null) {
         const split = result[0].image.split('/images/')[1];
         fs.unlink(`images/${split}`, () => {
           if (err) console.log(err);
-          else console.log('Image supprimée !');
         });
       };
+      const delAccount = `DELETE FROM users WHERE id = ?`;
+      data.query(delAccount, id,(err, result) => {
+        if (err) { console.log(err) };
+        if (result) {
+          res.status(200).json ({ message: `Votre compte utilisateur à bien été supprimé !` }); 
+        }
+      })
     }
-  });  
-  const delAccount = `DELETE FROM users WHERE id = ?`;
-  data.query(delAccount, id,(err, result) => {
-    if (err)  {
-      res.status(404).json ({ message: "Vous n'êtes pas autorisé à supprimer ce compte !" });
+    else {
+      res.status(401).json ({ message: "Vous n'êtes pas autorisé à supprimer ce compte !" });
       return;
-    }
-    if (req.params.id == req.auth.userId) {
-      if (result){
-        res.status(200).json ({ message: `Compte utilisateur n°${req.params.id} supprimé !` }); 
-      };
     };
   });
 };

@@ -1,5 +1,5 @@
 const bdd = require ('../utils/database');
-const token = require ('../middleware/token')
+const token = require ('../middleware/token');
 const fs = require('fs');
 const dotenv = require('dotenv');
 const result = dotenv.config();

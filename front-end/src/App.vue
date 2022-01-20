@@ -1,12 +1,10 @@
 <template>
-<body id="app"> 
+<body>
   <header-main></header-main>
-    <main>
+    
       <router-view></router-view>
-    </main>
+    
   <footer-main></footer-main>
-
-
 </body>
 </template>
 
@@ -24,8 +22,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#app {
+
+body {
+  width: 100%;
+  height: 100%;
   margin:0;
   padding:0;
 }
+
 </style>

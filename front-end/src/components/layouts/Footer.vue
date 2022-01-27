@@ -1,9 +1,8 @@
 <template>
   <footer>
     <ul>
-        <li><a href="#">Conditions générales d'utilisation</a></li>
         <li><a href="mailto:contact@groupomania.com"><fa icon="at"/> Contact</a></li>
-        <li><a href="/"><fa icon="copyright"/> 2022 - Groupomania</a></li>
+        <li><a href="#"><fa icon="copyright"/> 2022 - Groupomania</a></li>
     </ul>
   </footer>
 </template>

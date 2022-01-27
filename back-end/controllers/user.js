@@ -68,9 +68,11 @@ exports.login = (req, res, next) => {
           };
 
           res.status(200).json ({
-            userId: results[0].id,   
+            userId: results[0].id, 
+            admin: results[0].admin,
             token: jwt.sign(
-            { userId: results[0].id },
+            { userId: results[0].id,
+              admin: results[0].admin },
             `${process.env.JWT_KEY_TOKEN}`,
             { expiresIn: "5h" }
             )  
@@ -169,7 +171,7 @@ exports.deleteAccount = (req, res, next) => {
   
   const account = `SELECT * FROM Users WHERE id = ?`;
   data.query(account, id,(err, result) => {
-    if (id == req.auth.userId) {  
+    if (id == req.auth.userId || req.admin) {  
       if (err) { console.log(err) };
       if(result[0].image || null) {
         const split = result[0].image.split('/images/')[1];

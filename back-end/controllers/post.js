@@ -89,10 +89,11 @@ exports.modifyPost = (req, res, next) => {
   const userId = token.tokenUserId(req);
   const { id } = req.params;
   let imageUrl;
- 
+  console.log("admin?")
+  console.log(req.admin)
   const post = `SELECT * FROM posts WHERE id = ?`;
   data.query(post, id,(err, result) => {
-    if (result[0].userId === req.auth.userId) {
+    if (result[0].userId === req.auth.userId || req.admin) {
       if (err)  { console.log(err) };
       if(result[0].image) {
         const split = result[0].image.split('/images/')[1];
@@ -140,7 +141,7 @@ exports.deletePost = (req, res, next) => {
 
   const post = `SELECT * FROM posts WHERE id = ?`;
   data.query(post, id,(err, result) => {
-    if (result[0].userId === req.auth.userId) {
+    if (result[0].userId === req.auth.userId || req.admin) {
     if (err) { console.log(err) };
       if(result[0].image || null) {
         const split = result[0].image.split('/images/')[1];
@@ -207,7 +208,7 @@ exports.modifyComment = (req, res, next) => {
     console.log(result[0].userId)
     console.log(userId)
     if (err) { console.log(err) };
-    if (result[0].userId === userId) {
+    if (result[0].userId === userId || req.admin) {
       const {message} = req.body;
       if (message){
         const update = `UPDATE comments SET message = ? WHERE id = ?`;
@@ -235,7 +236,7 @@ exports.deleteComment = (req, res, next) => {
   const select = `SELECT * FROM comments WHERE id = ?`;
   data.query(select, id,(err, result) => {
     if (err) { console.log(err) };
-    if (result[0].userId === req.auth.userId) {
+    if (result[0].userId === req.auth.userId || req.admin) {
       const delCom = `DELETE FROM comments WHERE id = ?`;
       data.query(delCom, id,(err, result) => {
         if (err) { console.log(err) };

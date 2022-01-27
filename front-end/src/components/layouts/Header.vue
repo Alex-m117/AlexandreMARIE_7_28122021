@@ -1,8 +1,6 @@
 <template>
     <header> 
-        <a href="/" class="header"> 
             <img src="../../assets/images/logo_white.png" alt="Groupomania">
-        </a>
     </header>
 </template>
 
@@ -14,7 +12,7 @@ name: 'Header'
 
 <style lang="scss" scoped >
 
-.header {
+header {
     display:flex;
     justify-content: center;
     width: 100%;

@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
         throw 'Identifiant utilisateur invalide !';
       } 
       else {
+        req.admin = decodedToken.admin;
       next();
   };
   } 

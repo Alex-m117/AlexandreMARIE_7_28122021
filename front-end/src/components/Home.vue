@@ -1,13 +1,15 @@
 <template>
-<section>
-  <navbar> <fa icon="user"/> <fa icon="sign-out-alt"/>  </navbar>
-   <div></div>
-   </section>
+  <div class="home">
+    <posts></posts>
+  </div>
 </template>
 
 <script>
-export default {
+import Post from "./components/Post"
 
+export default {
+    name: "Home",
+    components: { 'posts': Post, }
 }
 </script>
 

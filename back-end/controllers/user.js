@@ -87,6 +87,7 @@ exports.login = (req, res, next) => {
 
 exports.getAccount = (req, res, next) => {
 
+  const { id } = req.params;
   const account = `SELECT * FROM users WHERE id = ?`;
   data.query(account, id,(err, result) => {
     if (err)  { console.log(err) };
@@ -108,8 +109,8 @@ exports.updateAccount = (req, res, next) => {
     const account = `SELECT * FROM users WHERE id = ?`;
     data.query(account, id,(err, result) => {
       if (err) { console.log(err) };
-        if(result[0].image || null) {
-          const split = result[0].image.split('/images/')[1];
+        if(result[0].photo || null) {
+          const split = result[0].photo.split('/images/')[1];
           fs.unlink(`images/${split}`, () => {
             if (err) console.log(err); 
           })
@@ -127,8 +128,8 @@ exports.updateAccount = (req, res, next) => {
       else {
         imageUrl = null;
       }
-        const updateImage = `UPDATE users SET image = ? WHERE id = ?`;
-        data.query(updateImage, [imageUrl, id],  (err, result) => {
+        const updatePhoto = `UPDATE users SET photo = ? WHERE id = ?`;
+        data.query(updatePhoto, [imageUrl, id],  (err, result) => {
           if (err) { console.log(err) };
         }); 
     }
@@ -173,8 +174,8 @@ exports.deleteAccount = (req, res, next) => {
   data.query(account, id,(err, result) => {
     if (id == req.auth.userId || req.admin) {  
       if (err) { console.log(err) };
-      if(result[0].image || null) {
-        const split = result[0].image.split('/images/')[1];
+      if(result[0].photo || null) {
+        const split = result[0].photo.split('/images/')[1];
         fs.unlink(`images/${split}`, () => {
           if (err) console.log(err);
         });

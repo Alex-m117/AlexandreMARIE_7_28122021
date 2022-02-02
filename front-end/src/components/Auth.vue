@@ -182,15 +182,15 @@ export default {
       this.email = document.querySelector('#email__signup').value
       this.password = document.querySelector('#password__signup').value
       if (this.validationSignup()) {
-        const self = this;
+        const tag = this;
         const signup = {
           pseudo: this.pseudo,
           email: this.email,
           password: this.password,
         }
         const login = {
-          email: self.email,
-          password: self.password,
+          email: tag.email,
+          password: tag.password,
         }
         axios.post('http://localhost:3000/api/user/signup', signup)
           .then(response => {

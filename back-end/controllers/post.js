@@ -13,18 +13,13 @@ exports.createPost = (req, res, next) => {
 
   try {
 
-    if(message === null) {
-      res.status(200).json ({ message: 'Veuillez saisir votre message.' });
-      return;
-    };
-
     const create = `SELECT * FROM users WHERE id = ?`;
     data.query(create, userId,(err, result) => {
       if (err)  {
         res.status(404).json ({ message: "Récupération de l'userId impossible !" });
         return;
       }
-    });
+    
     if(req.file) {
       imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
     }
@@ -39,13 +34,13 @@ exports.createPost = (req, res, next) => {
     const post = ({
       message: message,
       image: imageUrl, 
-      date : dateCreate,
+      date_message : dateCreate,
       userId: userId,      
     })
         
     const sql = `INSERT INTO posts SET ?`;
     data.query(sql, [post],(err, result) => {
-      if (err)  {
+      if (err)  {console.log(err)
         res.status(404).json ({ message: "Ajout des informations impossible !" });
         return;
       }
@@ -53,6 +48,7 @@ exports.createPost = (req, res, next) => {
         res.status(201).json ({ message: "Création de post réussie" }); 
       };
     });
+  });
   }
     catch(err) {res.status(500).json({ message: " Erreur serveur", err });
   };
@@ -61,7 +57,7 @@ exports.createPost = (req, res, next) => {
 exports.getOnePost = (req, res, next) => {
 
   const { id } = req.params;
-  const post = `SELECT * FROM posts WHERE id = ?`;
+  const post = `SELECT * FROM posts WHERE id_post = ?`;
   data.query(post, id,(err, result) => {
     if (err)  {
       res.status(404).json ({ message: "Récupération du post impossible !" });
@@ -74,8 +70,8 @@ exports.getOnePost = (req, res, next) => {
 exports.getAllPosts = (req, res, next) => {
 
   const { id } = req.params;
-  const posts = `SELECT * FROM posts JOIN users WHERE users.id = userId ORDER BY date DESC LIMIT 50`;
-  data.query(posts, id,(err, result) => {
+  const posts = `SELECT * FROM posts JOIN users WHERE users.id = userId ORDER BY date_message DESC LIMIT 50`;
+  data.query(posts,(err, result) => {
     if (err)  {
       res.status(404).json ({ message: "Récupération des posts impossible !" });
       return;
@@ -89,9 +85,7 @@ exports.modifyPost = (req, res, next) => {
   const userId = token.tokenUserId(req);
   const { id } = req.params;
   let imageUrl;
-  console.log("admin?")
-  console.log(req.admin)
-  const post = `SELECT * FROM posts WHERE id = ?`;
+  const post = `SELECT * FROM posts WHERE id_post = ?`;
   data.query(post, id,(err, result) => {
     if (result[0].userId === req.auth.userId || req.admin) {
       if (err)  { console.log(err) };
@@ -115,10 +109,10 @@ exports.modifyPost = (req, res, next) => {
       const modify = {
         message: req.body.message,
         image: imageUrl, 
-        date : dateCreate
+        date_message : dateCreate,
       };
 
-      const update = `UPDATE posts SET ? WHERE id = ?`;
+      const update = `UPDATE posts SET ? WHERE id_post = ?`;
       data.query(update, [modify, id], (err, result) => {
           if (err) { console.log(err) };
           if (result){
@@ -139,7 +133,7 @@ exports.deletePost = (req, res, next) => {
   const userId = token.tokenUserId(req);
   const { id } = req.params;
 
-  const post = `SELECT * FROM posts WHERE id = ?`;
+  const post = `SELECT * FROM posts WHERE id_post = ?`;
   data.query(post, id,(err, result) => {
     if (result[0].userId === req.auth.userId || req.admin) {
     if (err) { console.log(err) };
@@ -155,8 +149,8 @@ exports.deletePost = (req, res, next) => {
       return;
     }
 
-    if (req.params.id == result[0].id) {
-      const post = `DELETE FROM posts WHERE id = ?`;
+    if (req.params.id == result[0].id_post) {
+      const post = `DELETE FROM posts WHERE id_post = ?`;
       data.query(post, id,(err, result) => {
         if (err) { console.log(err) };
         if (result) {
@@ -182,8 +176,8 @@ exports.createComment = (req, res, next) => {
   var dateCreate= new Date(jsonDate);
 
   const comment = ({
-      message: req.body.message,
-      date : dateCreate,
+      comment: req.body.comment,
+      date_comment : dateCreate,
       userId: userId,
       postId: id      
   });
@@ -198,12 +192,25 @@ exports.createComment = (req, res, next) => {
   }); 
 };
 
+exports.getAllComments = (req, res, next) => {
+
+  const { id } = req.params;
+  const comments = `SELECT * FROM comments JOIN users WHERE users.id = userId ORDER BY date_comment DESC LIMIT 50`;
+  data.query(comments,(err, result) => {
+    if (err)  {
+      res.status(404).json ({ message: "Récupération des commentaires impossible !" });
+      return;
+    }
+      res.status(200).json ({ result }); 
+  });
+};
+
 exports.modifyComment = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
   const { id } = req.params;
 
-  const select = `SELECT * FROM comments WHERE id = ?`
+  const select = `SELECT * FROM comments WHERE id_comment = ?`
   data.query(select, id,(err, result) => {
     console.log(result[0].userId)
     console.log(userId)
@@ -211,7 +218,7 @@ exports.modifyComment = (req, res, next) => {
     if (result[0].userId === userId || req.admin) {
       const {message} = req.body;
       if (message){
-        const update = `UPDATE comments SET message = ? WHERE id = ?`;
+        const update = `UPDATE comments SET comment = ? WHERE id_comment = ?`;
         data.query(update, [message, id], (err, result) => {
             if (err) { console.log(err) };
             if (result) {
@@ -233,11 +240,11 @@ exports.deleteComment = (req, res, next) => {
   const userId = token.tokenUserId(req);
   const { id } = req.params;
 
-  const select = `SELECT * FROM comments WHERE id = ?`;
+  const select = `SELECT * FROM comments WHERE id_comment = ?`;
   data.query(select, id,(err, result) => {
     if (err) { console.log(err) };
     if (result[0].userId === req.auth.userId || req.admin) {
-      const delCom = `DELETE FROM comments WHERE id = ?`;
+      const delCom = `DELETE FROM comments WHERE id_comment = ?`;
       data.query(delCom, id,(err, result) => {
         if (err) { console.log(err) };
         if (result) {

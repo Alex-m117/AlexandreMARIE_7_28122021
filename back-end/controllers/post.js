@@ -9,7 +9,6 @@ exports.createPost = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
   let imageUrl;
-  const { message } = req.body;
 
   try {
 
@@ -32,12 +31,13 @@ exports.createPost = (req, res, next) => {
     var dateCreate= new Date(jsonDate);
 
     const post = ({
-      message: message,
+      message: req.body.message,
       image: imageUrl, 
       date_message : dateCreate,
       userId: userId,      
     })
-        
+    console.log("req.body?")
+    console.log(req.body)
     const sql = `INSERT INTO posts SET ?`;
     data.query(sql, [post],(err, result) => {
       if (err)  {console.log(err)
@@ -94,14 +94,15 @@ exports.modifyPost = (req, res, next) => {
         fs.unlink(`images/${split}`, () => {
           if (err) console.log(err);
         })
-      };
+      };  
+     
       if(req.file) {
         imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
       }
       else {
         imageUrl = null;
       }
-
+  
       var now = new Date();
       var jsonDate = now.toJSON();
       var dateCreate= new Date(jsonDate);
@@ -111,7 +112,7 @@ exports.modifyPost = (req, res, next) => {
         image: imageUrl, 
         date_message : dateCreate,
       };
-
+  
       const update = `UPDATE posts SET ? WHERE id_post = ?`;
       data.query(update, [modify, id], (err, result) => {
           if (err) { console.log(err) };

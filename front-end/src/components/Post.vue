@@ -117,7 +117,7 @@ export default {
       text: null,
       formData: {
         message: null,
-        image: null
+        image: null,
       }
     }
   },
@@ -152,13 +152,13 @@ export default {
   createPost: function() {
     const token = localStorage.getItem("token");
     this.userId = localStorage.getItem("userId");
-    this.message = document.querySelector('#text__create').value;
+    this.message = document.getElementById('text__create').value;
     
     const data = new FormData();
 
     data.append("userId", this.userId);
     if (this.message !="") {
-      data.append("messsage", this.message);
+      data.append("message", this.message);
     }
     if (this.image !="") {
       data.append("image", this.image,);
@@ -174,6 +174,7 @@ export default {
       .then(response => {
         console.log(response);
         document.querySelector('#text__create').value = null;
+        this.getPosts();
       })
       .catch(error => {
         console.log(error)
@@ -203,10 +204,13 @@ export default {
   deletePost: function() {
     const token = localStorage.getItem("token");
     this.userId = localStorage.getItem("userId");
+    const user = localStorage.getItem("user");
     const admin = localStorage.getItem("admin");
     const postId = this.$route.params.id;
    
-    if (this.userId == postId || admin == true)
+    console.log(this.userId)
+    console.log(user)
+    if (this.userId === user || admin == true)
     axios.delete (`http://localhost:3000/api/post/${postId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -214,6 +218,7 @@ export default {
     })
     .then(response => {
       console.log(response)
+      this.$router.go()
       this.getPosts()
      
     })
@@ -245,7 +250,6 @@ export default {
   },
   createComment: function() {
     const token = localStorage.getItem("token");
-    //const userId = localStorage.getItem("userId");
     const postId = parseInt(this.$route.params.id);
     const comment = document.getElementById('comment__create').value;
 
@@ -283,6 +287,8 @@ export default {
     .then(response => {
       this.data = response.data.result[0];
       const user = (JSON.parse(JSON.stringify(this.data)));
+      localStorage.setItem('user', user.id);
+
       console.log("user")
       console.log(user.admin)
     })

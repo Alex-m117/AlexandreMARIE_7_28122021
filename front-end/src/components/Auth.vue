@@ -67,7 +67,7 @@
         </div>
   
         <p v-if="accountError && mode == signup" class="account__error"> Email deja utilisé </p>
-         <button :disabled= "!valideForm" class="validSignup" v-if="mode == 'signup' " @click="signup()"> Inscription </button>
+         <button :disabled="!valideForm" class="validSignup" v-if="mode == 'signup' " @click="signup()"> Inscription </button>
       </form>
 
    </div>

@@ -1,15 +1,17 @@
 <template>
   <div class="home">
-    <posts></posts>
+    <Post />
   </div>
 </template>
 
 <script>
-import Post from "./components/Post"
+import Post from './Post.vue';
 
 export default {
-    name: "Home",
-    components: { 'posts': Post, }
+  name : 'Home',
+  components : { 
+    Post,
+    },
 }
 </script>
 

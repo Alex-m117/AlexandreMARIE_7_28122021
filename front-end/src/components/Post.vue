@@ -1,12 +1,12 @@
 <template>
 <section>
 
-  <navbar>
+  <div class="navbar">
     <div class="home__control">
       <fa icon="user"/> 
       <fa icon="sign-out-alt"/>
     </div>
-  </navbar>
+  </div>
 
   <div class="create__post"> 
     <form class="new__post" @submit.prevent="Publier">
@@ -29,25 +29,29 @@
         />
       </div> 
       <div class="form__valid"> 
-        <button :disabled= "!valideCreate" class="valid__create" @click="createPost()"> Publier </button>
+        <button :disabled="!validePost" class="valid__post" @click="createPost()"> Publier </button>
       </div>
     </form> 
   </div>
 
   <div class="post" v-for="post in posts" v-bind:key="post.id_post">
+
     <div class="profil__post">
       <div class="profil__info">
+        
       <img class="profil__pic" v-bind:src="post.photo">
         <div class="profil__author">
           <span class="profil__pseudo"> {{ post.pseudo }} </span>
           <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
         </div>
         <div class="post__moderate">
-          <fa  class="modify__post" icon="edit"/>
-          <fa  class="delete__post" icon="trash"/> 
+          <fa class="modify__post" icon="edit"/>
+          <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
+            <fa v-if="post.userId == userId || user.admin == true" class="delete__post" icon="trash" @click="deletePost()"/>
+          </router-link>
         </div>
       </div> 
-      <div v-if="post.message != '' " class="display__text">
+      <div v-if="post.message !='' " class="display__text">
         <span class="post__message"> {{ post.message }} </span>
       </div>
       <div v-if="post.image" class="display__image">
@@ -56,19 +60,45 @@
 
       <div class="post__comment"> 
         <div class="comment__status">
-          <fa icon="comments" @click="displayComments" /> 
+          
+          <fa icon="comments" /> Commentaires
+          
         </div>
       </div>
+      <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
+        <form class="new__comment" @submit.prevent="Publier">
+          <input 
+            type="text"
+            name="comment"
+            id="comment__create"
+            placeholder="Ajouter un commentaire"
+          />
+          <button :disabled="!valideComment" class="valid__comment" @click="createComment()"> Publier </button>
+        </form>
+      </router-link>
+
+
       <div class="comments" v-for="comment in comments" v-bind:key="comment.postId" > 
-
-        <div v-if="comment.postId == post.id_post" class="co"> {{ comment }} </div>
+        <div v-if="comment.postId == post.id_post" class="comment_id"> 
+          <div class="commentaire">
+          <img class="comment__photo" v-bind:src="comment.photo">
+            <div class="comment__block">
+              <div class="comment__info">
+                <span class="comment__pseudo"> {{ comment.pseudo }} </span>
+                <div class="comment__moderate">
+                  <fa class="modify__post" icon="edit"/>
+                  <fa class="delete__post" icon="trash"/> 
+                </div>
+              </div>
+              <div class="comment__post">
+                <p class="comment__comment"> {{ comment.comment }} </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-
     </div>
   </div>
-  
-
 
 </section>
 </template>
@@ -81,16 +111,25 @@ export default {
   data: function() {
     return {
       posts: [],
-        id: null,
-        formData: {
-          message: null,
-          image: null
-        }
-
+      user: [],
+      comments: null,
+      id: null,
+      text: null,
+      formData: {
+        message: null,
+        image: null
+      }
     }
   },
   computed:{
-    valideCreate: function() {
+    validePost: function() {
+      if (this.text !="") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    valideComment: function() {
       if (this.text !="") {
         return true;
       } else {
@@ -161,10 +200,31 @@ export default {
       }
     })
   },
+  deletePost: function() {
+    const token = localStorage.getItem("token");
+    this.userId = localStorage.getItem("userId");
+    const admin = localStorage.getItem("admin");
+    const postId = this.$route.params.id;
+   
+    if (this.userId == postId || admin == true)
+    axios.delete (`http://localhost:3000/api/post/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then(response => {
+      console.log(response)
+      this.getPosts()
+     
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  },
   getComment: function() {
     const token = localStorage.getItem("token");
     this.userId = localStorage.getItem("userId");
-    const postId = this.$route.params.id_post;
+    const postId = this.$route.params.id;
 
     const tag = this;
     axios.get(`http://localhost:3000/api/post/${postId}/comments/`, {
@@ -174,34 +234,64 @@ export default {
     })
     .then(response => {
       this.data = response.data.result;
-      this.comments = (JSON.parse(JSON.stringify(this.data))); 
+      this.comments = (JSON.parse(JSON.stringify(this.data)));
+      this.getPosts()
     })
     .catch(error => {
       if(error.response && error.response.status === 401) {
         tag.$router.push('/');
       }
     })
-  
+  },
+  createComment: function() {
+    const token = localStorage.getItem("token");
+    //const userId = localStorage.getItem("userId");
+    const postId = parseInt(this.$route.params.id);
+    const comment = document.getElementById('comment__create').value;
+
+    const data = { comment };
+
+    axios.post(`http://localhost:3000/api/post/${postId}/comments/`, data, {
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then(response => {
+      console.log(response)
+      document.getElementById('comment__create').value = null;
+      this.getComment();
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  },
 
 
-
-
-
-
-  }
-
-
-
-
-
-
-
-
-
-
- 
   },
   mounted() {
+    const token = localStorage.getItem("token");
+    this.userId = localStorage.getItem("userId");
+    const userId = this.userId;
+    const tag = this;
+
+    axios.get(`http://localhost:3000/api/user/account/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then(response => {
+      this.data = response.data.result[0];
+      const user = (JSON.parse(JSON.stringify(this.data)));
+      console.log("user")
+      console.log(user.admin)
+    })
+    .catch(error => {
+      if(error.response && error.response.status === 404) {
+        console.log(error)
+        tag.$router.push('/');
+      }
+    })
     this.getPosts()
     this.getComment()
   },
@@ -215,7 +305,7 @@ section {
 }
 
 .home__control {
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -290,7 +380,7 @@ section {
   
 }
 
-.valid__create {
+.valid__post {
    border-style: none;
    width: 40%;
    height: 30px;
@@ -301,34 +391,24 @@ section {
    cursor: pointer;
 }
 
-
-
-
-
-
-
-
-
-
 .post {
   display:flex;
   justify-content: center;
-  margin-bottom: 20px;
- 
+  margin-bottom: 30px;
 }
 
 .profil__post{
   display: flex;
   flex-direction: column;
   width: 80%;
-  border:2px solid black;
+  border-radius: 20px;
+  box-shadow: 3px 3px 3px 3px #D3D3D3;
 }
 
 .profil__info {
   display: flex;
   flex-direction: row;
-  margin: 5px;
-  border: 2px solid yellow;
+  margin: 10px;
 }
 
 .profil__pic {
@@ -356,7 +436,8 @@ section {
 .display__text {
   display:flex;
   width: 100%;
-  border: 2px solid green;
+  border-top: 1px solid #eaeaea;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .post__message {
@@ -368,14 +449,205 @@ section {
 .display__image {
   object-fit: cover;
   width: 100%;
-  height: 300px;;
+  height: 500px;;
   border: 2px solid red;
 }
 
+//Commentaires
+.comment_id {
+  display: flex;
+}
 
+.comment__status {
+  margin: 10px;
+}
 
+.new__comment {
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 30px;
+}
 
+#comment__create {
+  width: 70%;
+  border: 2px solid #d3d3d3;
+  border-radius: 20px;
+  padding: 10px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
 
+.valid__comment {
+  margin-top: 10px;
+  border-style: none;
+  text-decoration: none;
+  font-weight: 600;
+  background-color: #d3d3d3;
+  border-radius: 15px;
+  padding: 10px;
+  cursor: pointer;
+}
 
+.commentaire {
+  display:flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 10px;
+  border-radius: 25px;
+  min-width: 40%;
+}
+
+.comment__block {
+  display: flex;
+  flex-direction: column;
+  min-width: 40%;
+  border-radius: 25px;
+  width: auto;
+  background-color: #D2F0E4;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.comment__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 10px;
+  height: 55px;
+  width: 100%;
+}
+
+.comment__photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border: 1px solid red;
+  object-fit: cover;
+  margin-top: 5px;
+}
+
+.comment__moderate {
+  display:flex;
+  flex-direction: row;
+  width: 50px;
+  margin-right: 15px;
+  justify-content: space-around;
+}
+
+.comment__comment {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 95%;
+}
+
+// média queries
+
+@media (min-width: 280px) {
+
+.profil__post{
+  width: 95%;
+}
+
+.new__post {
+  width: 95%;
+}
+
+.home__control {
+  width: 95%;
+}
+
+.display__image {
+  height: 350px;
+}
+
+};
+
+@media (min-width: 550px) {
+
+.profil__post{
+  width: 80%;
+}
+
+.new__post {
+  width: 80%;
+}
+
+.home__control {
+  width: 90%;
+}
+
+};
+
+@media (min-width: 700px) {
+
+.profil__post{
+  width: 70%;
+}
+
+.new__post {
+  width: 70%;
+}
+
+.home__control {
+  width: 85%;
+}
+
+};
+
+@media (min-width: 800px) {
+
+.profil__post{
+  width: 60%;
+}
+
+.new__post {
+  width: 60%;
+}
+
+.home__control {
+  width: 80%;
+}
+
+};
+
+@media (min-width: 900px) {
+
+.profil__post{
+  width: 50%;
+}
+
+.new__post {
+  width: 50%;
+}
+
+.home__control {
+  width: 75%;
+}
+
+};
+
+@media (min-width: 1600px) {
+
+.profil__post{
+  width: 40%;
+}
+
+.new__post {
+  width: 40%;
+}
+
+.home__control {
+  width: 70%;
+}
+
+};
 
 </style>

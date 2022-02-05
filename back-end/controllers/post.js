@@ -149,7 +149,7 @@ exports.deletePost = (req, res, next) => {
       return;
     }
 
-    if (req.params.id == result[0].id_post) {
+    if (req.params.id == result[0].id_post || req.admin) {
       const post = `DELETE FROM posts WHERE id_post = ?`;
       data.query(post, id,(err, result) => {
         if (err) { console.log(err) };

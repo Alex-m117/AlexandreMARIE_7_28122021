@@ -13,6 +13,7 @@ exports.signup = async (req, res, next) => {
       pseudo: req.body.pseudo, 
       email: req.body.email,
       password: hash,
+      photo : `${req.protocol}://${req.get('host')}/images/default.png`,
       admin: false
     });
 
@@ -109,11 +110,13 @@ exports.updateAccount = (req, res, next) => {
     const account = `SELECT * FROM users WHERE id = ?`;
     data.query(account, id,(err, result) => {
       if (err) { console.log(err) };
-        if(result[0].photo || null) {
-          const split = result[0].photo.split('/images/')[1];
-          fs.unlink(`images/${split}`, () => {
-            if (err) console.log(err); 
-          })
+        if (req.file) {
+          if(result[0].photo != "http://localhost:3000/images/default.png") {
+            const split = result[0].photo.split('/images/')[1];
+            fs.unlink(`images/${split}`, () => {
+              if (err) console.log(err); 
+            })
+          };
         };
       });
     }
@@ -124,9 +127,6 @@ exports.updateAccount = (req, res, next) => {
     if (id == req.auth.userId) {
       if(req.file) {
         imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-      }
-      else {
-        imageUrl = null;
       }
         const updatePhoto = `UPDATE users SET photo = ? WHERE id = ?`;
         data.query(updatePhoto, [imageUrl, id],  (err, result) => {

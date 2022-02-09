@@ -159,6 +159,8 @@ export default {
       this.email = document.querySelector('#email__login').value;
       this.password = document.querySelector('#password__login').value;
       if (this.validationLogin()) {
+        const tag = this;
+
         const data = {
           email: this.email,
           password: this.password
@@ -169,7 +171,7 @@ export default {
           localStorage.setItem('userId', response.data.userId);
           localStorage.setItem('admin', response.data.admin);
           console.log(response);
-          this.$router.push('Home')
+          tag.$router.push('Home')
         })
         .catch(error => {
         
@@ -200,7 +202,7 @@ export default {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.userId);
                 localStorage.setItem('admin', response.data.admin);
-                self.$router.push('Home')
+                tag.$router.push('Home')
                 console.log(response);
               })
               .catch(error => {

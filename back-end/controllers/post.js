@@ -36,8 +36,6 @@ exports.createPost = (req, res, next) => {
       date_message : dateCreate,
       userId: userId,      
     })
-    console.log("req.body?")
-    console.log(req.body)
     const sql = `INSERT INTO posts SET ?`;
     data.query(sql, [post],(err, result) => {
       if (err)  {console.log(err)
@@ -176,7 +174,7 @@ exports.createComment = (req, res, next) => {
   var jsonDate = now.toJSON();
   var dateCreate= new Date(jsonDate);
 
-  const comment = ({
+  const commentaire = ({
       comment: req.body.comment,
       date_comment : dateCreate,
       userId: userId,
@@ -184,7 +182,7 @@ exports.createComment = (req, res, next) => {
   });
 
   const post = `INSERT INTO comments SET ?`;
-  data.query(post, [comment],(err, result) => {
+  data.query(post, [commentaire],(err, result) => {
     if (err) { console.log(err) };
     if (result) {
        res.status(200).json ({ message: "Votre commentaire à bien était ajouté !" });

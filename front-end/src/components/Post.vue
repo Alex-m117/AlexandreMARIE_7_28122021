@@ -3,7 +3,9 @@
 
   <div class="navbar">
     <div class="home__control">
-      <fa icon="user"/> 
+      <router-link :to="{ name: 'User', params: { userId : userId } } ">
+        <fa icon="user"/>
+      </router-link>
       <fa icon="sign-out-alt"/>
     </div>
   </div>
@@ -11,7 +13,8 @@
   <div class="create__post"> 
     <form class="new__post" @submit.prevent="Publier">
       <div class="form__post"> 
-        <input 
+        <input
+          v-model="message"
           type="text"
           name="message"
           id="text__create"
@@ -38,8 +41,9 @@
 
     <div class="profil__post">
       <div class="profil__info">
-        
-      <img class="profil__pic" v-bind:src="post.photo">
+      <router-link :to="{ name: 'User', params: { userId : post.userId } } ">
+        <img class="profil__pic" v-bind:src="post.photo">
+      </router-link>
         <div class="profil__author">
           <span class="profil__pseudo"> {{ post.pseudo }} </span>
           <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
@@ -47,7 +51,7 @@
         <div class="post__moderate">
           <fa class="modify__post" icon="edit"/>
           <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
-            <fa v-if="post.userId == userId || user.admin == true" class="delete__post" icon="trash" @click="deletePost()"/>
+            <fa v-if="post.userId == userId || post.admin == 1" class="delete__post" icon="trash" @click="deletePost()"/>
           </router-link>
         </div>
       </div> 
@@ -57,36 +61,34 @@
       <div v-if="post.image" class="display__image">
         <span class="post__image"> <img v-bind:src="post.image" class="image"> </span>
       </div>
-
       <div class="post__comment"> 
         <div class="comment__status">
-          
           <fa icon="comments" /> Commentaires
-          
         </div>
       </div>
       <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
-        <form class="new__comment" @submit.prevent="Publier">
+        <form class="new__comment" @submit.prevent= createComment()>
           <input 
             type="text"
             name="comment"
             id="comment__create"
             placeholder="Ajouter un commentaire"
+            required
           />
-          <button :disabled="!valideComment" class="valid__comment" @click="createComment()"> Publier </button>
+          <button  type="submit" class="valid__comment"> Publier </button>
         </form>
       </router-link>
-
 
       <div class="comments" v-for="comment in comments" v-bind:key="comment.postId" > 
         <div v-if="comment.postId == post.id_post" class="comment_id"> 
           <div class="commentaire">
-          <img class="comment__photo" v-bind:src="comment.photo">
+          <router-link :to="{ name: 'User', params: { userId : comment.userId } } ">
+            <img class="comment__photo" v-bind:src="comment.photo">
+          </router-link>
             <div class="comment__block">
               <div class="comment__info">
                 <span class="comment__pseudo"> {{ comment.pseudo }} </span>
                 <div class="comment__moderate">
-                  <fa class="modify__post" icon="edit"/>
                   <fa class="delete__post" icon="trash"/> 
                 </div>
               </div>
@@ -108,13 +110,16 @@ import axios from "axios";
 
 export default {
   name : 'Post',
+  
   data: function() {
     return {
       posts: [],
       user: [],
-      comments: null,
+      comments: [],
       id: null,
-      text: null,
+      userId: localStorage.getItem("userId"),
+      message:'',
+      text:'',
       formData: {
         message: null,
         image: null,
@@ -123,7 +128,7 @@ export default {
   },
   computed:{
     validePost: function() {
-      if (this.text !="") {
+      if (this.message !="") {
         return true;
       } else {
         return false;
@@ -138,33 +143,77 @@ export default {
     }
   },
   methods: {
-  formatDate: function(createdDate){
-    const dateISO = new Date(createdDate)
-    const format = { year: 'numeric', month: 'long', day: 'numeric'};
-    let date = dateISO.toLocaleDateString('fr-FR', format);
-      if(createdDate){
-        return `Posté le ${date}`;
-      }
-  },
-  onChange(event) {
-    this.image = event.target.files[0];
-  },
-  createPost: function() {
-    const token = localStorage.getItem("token");
-    this.userId = localStorage.getItem("userId");
-    this.message = document.getElementById('text__create').value;
+    formatDate: function(createdDate){
+      const dateISO = new Date(createdDate)
+      const format = { year: 'numeric', month: 'long', day: 'numeric'};
+      let date = dateISO.toLocaleDateString('fr-FR', format);
+        if(createdDate){
+          return `Posté le ${date}`;
+        }
+    },
+    onChange(event) {
+      this.image = event.target.files[0];
+    },
+    createPost: function() {
+      const token = localStorage.getItem("token");
+      this.userId = localStorage.getItem("userId");
+      this.message = document.getElementById('text__create').value;
     
-    const data = new FormData();
+      const data = new FormData();
 
-    data.append("userId", this.userId);
-    if (this.message !="") {
-      data.append("message", this.message);
-    }
-    if (this.image !="") {
-      data.append("image", this.image,);
-    }
-    if (this.message || this.image) {
-      axios.post('http://localhost:3000/api/post/add/', data, {
+      data.append("userId", this.userId);
+      if (this.message !="") {
+        data.append("message", this.message);
+      }
+      if (this.image !="") {
+        data.append("image", this.image,);
+      }
+      if (this.message || this.image) {
+        axios.post('http://localhost:3000/api/post/add/', data, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(response => {
+          console.log(response);
+          this.$router.go();
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }
+    },
+    getPosts: function() {
+      const token = localStorage.getItem("token");
+      this.userId = localStorage.getItem("userId");
+
+      const tag = this;
+      axios.get('http://localhost:3000/api/post/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        this.data = response.data.result;
+        this.posts = (JSON.parse(JSON.stringify(this.data)));
+      })
+      .catch(error => {
+        if(error.response && error.response.status === 401) {
+          tag.$router.push('/');
+        }
+      })
+    },
+    deletePost: function() {
+      const token = localStorage.getItem("token");
+      this.userId = localStorage.getItem("userId");
+      const user = localStorage.getItem("user");
+      const admin = localStorage.getItem("admin");
+      const postId = this.$route.params.id;
+
+      if (this.userId === user || admin == true)
+      axios.delete (`http://localhost:3000/api/post/${postId}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': "multipart/form-data",
@@ -172,106 +221,64 @@ export default {
         },
       })
       .then(response => {
-        console.log(response);
-        document.querySelector('#text__create').value = null;
+        console.log(response, "post supprimé")
+        this.$router.go();
         this.getPosts();
       })
       .catch(error => {
         console.log(error)
       })
-    }
-  },
-  getPosts: function() {
-    const token = localStorage.getItem("token");
-    this.userId = localStorage.getItem("userId");
+    },
+    getComment: function() {
+      const token = localStorage.getItem("token");
+      this.userId = localStorage.getItem("userId");
+      const postId = this.$route.params.id;
+      const tag = this;
 
-    const tag = this;
-    axios.get('http://localhost:3000/api/post/', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then(response => {
-      this.data = response.data.result;
-      this.posts = (JSON.parse(JSON.stringify(this.data)));
-    })
-    .catch(error => {
-      if(error.response && error.response.status === 401) {
-        tag.$router.push('/');
+      axios.get(`http://localhost:3000/api/post/${postId}/comments/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        this.data = response.data.result;
+        this.comments = (JSON.parse(JSON.stringify(this.data)));
+        this.getPosts()
+      })
+      .catch(error => {
+        if(error.response && error.response.status === 401) {
+          tag.$router.push('/');
+        }
+      })
+    },
+    createComment: function() {
+      const token = localStorage.getItem("token");
+      const postId = parseInt(this.$route.params.id);
+      this.comment = document.getElementById('comment__create').value;
+      console.log(postId)
+      const data = new FormData();
+
+      if (this.comment !="") {
+        data.append("comment", this.comment);
       }
-    })
-  },
-  deletePost: function() {
-    const token = localStorage.getItem("token");
-    this.userId = localStorage.getItem("userId");
-    const user = localStorage.getItem("user");
-    const admin = localStorage.getItem("admin");
-    const postId = this.$route.params.id;
-   
-    console.log(this.userId)
-    console.log(user)
-    if (this.userId === user || admin == true)
-    axios.delete (`http://localhost:3000/api/post/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then(response => {
-      console.log(response)
-      this.$router.go()
-      this.getPosts()
-     
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  },
-  getComment: function() {
-    const token = localStorage.getItem("token");
-    this.userId = localStorage.getItem("userId");
-    const postId = this.$route.params.id;
-
-    const tag = this;
-    axios.get(`http://localhost:3000/api/post/${postId}/comments/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then(response => {
-      this.data = response.data.result;
-      this.comments = (JSON.parse(JSON.stringify(this.data)));
-      this.getPosts()
-    })
-    .catch(error => {
-      if(error.response && error.response.status === 401) {
-        tag.$router.push('/');
+      if (this.comment) {
+        axios.post(`http://localhost:3000/api/post/${postId}/comments/`, data, {
+          headers: {
+            'Content-type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(response => {
+          console.log(response)
+          document.getElementById('comment__create').value = null;
+          //this.$router.go();
+          this.getComment();
+        })
+        .catch(error => {
+          console.log(error)
+        })
       }
-    })
-  },
-  createComment: function() {
-    const token = localStorage.getItem("token");
-    const postId = parseInt(this.$route.params.id);
-    const comment = document.getElementById('comment__create').value;
-
-    const data = { comment };
-
-    axios.post(`http://localhost:3000/api/post/${postId}/comments/`, data, {
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then(response => {
-      console.log(response)
-      document.getElementById('comment__create').value = null;
-      this.getComment();
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  },
-
-
+    },
   },
   mounted() {
     const token = localStorage.getItem("token");
@@ -288,9 +295,6 @@ export default {
       this.data = response.data.result[0];
       const user = (JSON.parse(JSON.stringify(this.data)));
       localStorage.setItem('user', user.id);
-
-      console.log("user")
-      console.log(user.admin)
     })
     .catch(error => {
       if(error.response && error.response.status === 404) {
@@ -320,13 +324,16 @@ section {
 
 .fa-user {
   font-size: 30px;
-  margin-right: 5%;
 }
 
 .fa-sign-out-alt {
+  margin-left: 25px;
   font-size: 30px;
 }
 
+.invisible {
+  display: none;
+}
 // créer un post
 
 .create__post {
@@ -541,7 +548,6 @@ section {
   display:flex;
   flex-direction: row;
   width: 50px;
-  margin-right: 15px;
   justify-content: space-around;
 }
 

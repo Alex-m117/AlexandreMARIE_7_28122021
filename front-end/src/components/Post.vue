@@ -1,4 +1,5 @@
 <template>
+
 <section>
 
   <div class="navbar">
@@ -6,7 +7,7 @@
       <router-link :to="{ name: 'User', params: { userId : userId } } ">
         <fa icon="user"/>
       </router-link>
-      <fa icon="sign-out-alt"/>
+      <fa icon="sign-out-alt" @click="logOut()" />
     </div>
   </div>
 
@@ -49,9 +50,11 @@
           <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
         </div>
         <div class="post__moderate">
-          <fa class="modify__post" icon="edit"/>
           <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
-            <fa v-if="post.userId == userId || post.admin == 1" class="delete__post" icon="trash" @click="deletePost()"/>
+          <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
+          </router-link>
+          <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
+            <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost()"/>
           </router-link>
         </div>
       </div> 
@@ -67,7 +70,7 @@
         </div>
       </div>
       <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
-        <form class="new__comment" @submit.prevent= createComment()>
+        <form class="new__comment" @submit.prevent="Publier" @click="createComment()">
           <input 
             type="text"
             name="comment"
@@ -89,7 +92,9 @@
               <div class="comment__info">
                 <span class="comment__pseudo"> {{ comment.pseudo }} </span>
                 <div class="comment__moderate">
+   <!--               <router-link :to="{ name: 'Post', params: { id : id_comment } } ">
                   <fa class="delete__post" icon="trash"/> 
+                  </router-link> -->
                 </div>
               </div>
               <div class="comment__post">
@@ -102,28 +107,36 @@
     </div>
   </div>
 
+<modify v-bind:visible="visible" v-bind:modify_view="modify_view"></modify>
+
 </section>
+
 </template>
 
 <script>
+import Post_modify from "./layouts/Post_modify.vue"
 import axios from "axios";
 
 export default {
   name : 'Post',
-  
+  components: {
+    'modify' : Post_modify
+  },
   data: function() {
     return {
       posts: [],
       user: [],
       comments: [],
       id: null,
+      admin: localStorage.getItem("admin"),
       userId: localStorage.getItem("userId"),
       message:'',
       text:'',
       formData: {
         message: null,
         image: null,
-      }
+      },
+      visible: false,
     }
   },
   computed:{
@@ -223,7 +236,6 @@ export default {
       .then(response => {
         console.log(response, "post supprimé")
         this.$router.go();
-        this.getPosts();
       })
       .catch(error => {
         console.log(error)
@@ -255,7 +267,6 @@ export default {
       const token = localStorage.getItem("token");
       const postId = parseInt(this.$route.params.id);
       this.comment = document.getElementById('comment__create').value;
-      console.log(postId)
       const data = new FormData();
 
       if (this.comment !="") {
@@ -279,6 +290,40 @@ export default {
         })
       }
     },
+    deleteComment: function() {
+      const token = localStorage.getItem("token");
+      this.userId = localStorage.getItem("userId");
+      const user = localStorage.getItem("user");
+      const admin = localStorage.getItem("admin");
+      const commentId = this.$route.params.id;
+
+      if (this.userId === user || admin == true)
+      axios.delete (`http://localhost:3000/api/post/${commentId}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        console.log(response, "post supprimé")
+        this.$router.go();
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    },
+
+    logOut: function() {
+      localStorage.removeItem('user')
+      localStorage.removeItem('admin')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('token')
+      this.$router.push('/')
+    },
+    modify_view: function() {
+      this.visible = !this.visible
+    }
   },
   mounted() {
     const token = localStorage.getItem("token");

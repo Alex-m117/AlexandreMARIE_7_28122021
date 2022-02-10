@@ -9,10 +9,10 @@ import Post from './Post.vue';
 
 export default {
   name : 'Home',
-
   components : { 
     Post,
     },
+    
   data: function() {
     return {
     connected: true,

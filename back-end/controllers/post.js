@@ -87,38 +87,56 @@ exports.modifyPost = (req, res, next) => {
   data.query(post, id,(err, result) => {
     if (result[0].userId === req.auth.userId || req.admin) {
       if (err)  { console.log(err) };
-      if(result[0].image) {
-        const split = result[0].image.split('/images/')[1];
-        fs.unlink(`images/${split}`, () => {
-          if (err) console.log(err);
-        })
+        if (req.file) {
+          if(result[0].image) {
+            const split = result[0].image.split('/images/')[1];
+            fs.unlink(`images/${split}`, () => {
+              if (err) console.log(err);
+          })
+        }
       };  
      
       if(req.file) {
-        imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-      }
-      else {
-        imageUrl = null;
-      }
-  
-      var now = new Date();
-      var jsonDate = now.toJSON();
-      var dateCreate= new Date(jsonDate);
 
-      const modify = {
-        message: req.body.message,
-        image: imageUrl, 
-        date_message : dateCreate,
-      };
+        imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+        var now = new Date();
+        var jsonDate = now.toJSON();
+        var dateCreate= new Date(jsonDate);
+
+        const modify1 = {
+          message: req.body.message,
+          image: imageUrl, 
+          date_message : dateCreate,
+        };
   
-      const update = `UPDATE posts SET ? WHERE id_post = ?`;
-      data.query(update, [modify, id], (err, result) => {
+        const update = `UPDATE posts SET ? WHERE id_post = ?`;
+        data.query(update, [modify1, id], (err, result) => {
           if (err) { console.log(err) };
           if (result){
             res.status(201).json ({ message: "Informations mises à jour !" });
             return;
           }
-      });
+        });
+      }
+      else if (!req.file) {
+        var now = new Date();
+        var jsonDate = now.toJSON();
+        var dateCreate= new Date(jsonDate);
+
+        const modify2 = {
+          message: req.body.message,
+          date_message : dateCreate,
+        };
+  
+        const update = `UPDATE posts SET ? WHERE id_post = ?`;
+        data.query(update, [modify2, id], (err, result) => {
+          if (err) { console.log(err) };
+          if (result){
+            res.status(201).json ({ message: "Informations mises à jour !" });
+            return;
+          }
+        });
+      }
     }
     else {
       res.status(401).json  ({ message: "Impossible de mettre à jour les données utilisateur." });
@@ -243,6 +261,8 @@ exports.deleteComment = (req, res, next) => {
   data.query(select, id,(err, result) => {
     if (err) { console.log(err) };
     if (result[0].userId === req.auth.userId || req.admin) {
+      console.log("userdel")
+      console.log(result[0].userId)
       const delCom = `DELETE FROM comments WHERE id_comment = ?`;
       data.query(delCom, id,(err, result) => {
         if (err) { console.log(err) };

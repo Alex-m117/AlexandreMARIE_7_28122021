@@ -50,10 +50,10 @@
           <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
         </div>
         <div class="post__moderate">
-          <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
+          <router-link :to="{ params: { id : post.id_post } } ">
           <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
           </router-link>
-          <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
+          <router-link :to="{ params: { id : post.id_post } } ">
             <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost()"/>
           </router-link>
         </div>
@@ -69,16 +69,16 @@
           <fa icon="comments" /> Commentaires
         </div>
       </div>
-      <router-link :to="{ name: 'Post', params: { id : post.id_post } } ">
+      <router-link :to="{ params: { id : post.id_post } } ">
         <form class="new__comment" @submit.prevent="Publier" @click="createComment()">
-          <input 
+          <input
             type="text"
             name="comment"
             id="comment__create"
             placeholder="Ajouter un commentaire"
             required
           />
-          <button  type="submit" class="valid__comment"> Publier </button>
+          <button class="valid__comment"> Publier </button>
         </form>
       </router-link>
 
@@ -92,9 +92,9 @@
               <div class="comment__info">
                 <span class="comment__pseudo"> {{ comment.pseudo }} </span>
                 <div class="comment__moderate">
-   <!--               <router-link :to="{ name: 'Post', params: { id : id_comment } } ">
-                  <fa class="delete__post" icon="trash"/> 
-                  </router-link> -->
+                  <router-link :to="{ params: { id : comment.id_comment } } ">
+                    <fa v-if="comment.userId == userId || admin == true" class="delete__post" icon="trash" @click="deleteComment()"/> 
+                  </router-link> 
                 </div>
               </div>
               <div class="comment__post">
@@ -281,7 +281,7 @@ export default {
         })
         .then(response => {
           console.log(response)
-          document.getElementById('comment__create').value = null;
+          document.getElementById('comment__create').value = "";
           //this.$router.go();
           this.getComment();
         })
@@ -298,7 +298,7 @@ export default {
       const commentId = this.$route.params.id;
 
       if (this.userId === user || admin == true)
-      axios.delete (`http://localhost:3000/api/post/${commentId}`, {
+      axios.delete (`http://localhost:3000/api/post/comments/${commentId}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': "multipart/form-data",
@@ -512,6 +512,7 @@ section {
 }
 
 //Commentaires
+
 .comment_id {
   display: flex;
 }

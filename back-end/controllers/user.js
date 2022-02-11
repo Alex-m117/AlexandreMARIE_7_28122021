@@ -106,7 +106,7 @@ exports.updateAccount = (req, res, next) => {
   
   const { id } = req.params;
   let imageUrl;
-  if (id == req.auth.userId) {
+  if (id == req.auth.userId || req.admin) {
     const account = `SELECT * FROM users WHERE id = ?`;
     data.query(account, id,(err, result) => {
       if (err) { console.log(err) };
@@ -116,30 +116,36 @@ exports.updateAccount = (req, res, next) => {
             fs.unlink(`images/${split}`, () => {
               if (err) console.log(err); 
             })
-          };
-        };
+          }
+          if(result[0].photo = "http://localhost:3000/images/default.png") {
+            console.log('image par defaut changée');
+          }
+        }
       });
     }
     else{
       res.status(403).json ({ message: "Modifications non autorisées." });
       return;
     }
-    if (id == req.auth.userId) {
+    if (id == req.auth.userId || req.admin) {
       if(req.file) {
         imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
       }
+      if (imageUrl) {
         const updatePhoto = `UPDATE users SET photo = ? WHERE id = ?`;
         data.query(updatePhoto, [imageUrl, id],  (err, result) => {
           if (err) { console.log(err) };
         }); 
+      }
     }
     else {
       res.status(403).json ({ message: "Impossible de mettre à jour l'image utilisateur, vérifier le format." });
       return;
     };
+    if (!req.file) {
     // Modification du pseudo & biographie.
     const { pseudo, biography } = req.body;
-    if (id == req.auth.userId) {
+    if (id == req.auth.userId || req.admin) {
       if(pseudo) {
         const changePseudo = `UPDATE users SET pseudo = ? WHERE id = ?`;
         data.query(changePseudo, [pseudo, id],(err, result) => {
@@ -151,18 +157,20 @@ exports.updateAccount = (req, res, next) => {
       res.status(403).json ({ message: "Impossible de changer votre Pseudo !" });
       return;
     }
-    if (id == req.auth.userId) { 
+    if (id == req.auth.userId || req.admin) { 
       if(biography) {
         const changeBiography = `UPDATE users SET biography = ? WHERE id = ?`;
         data.query(changeBiography, [biography, id],(err, result) => {
           if (err) { console.log(err) };
         });
       };  
-    }          
+    } 
+           
     else {
       res.status(403).json ({ message: "Impossible de changer votre Biographie !" });
       return;
     }
+  }
       res.status(201).json ({ message: "Vos modifications ont bien étaient prises en compte !" });
 };
 

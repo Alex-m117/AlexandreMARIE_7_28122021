@@ -24,15 +24,12 @@ export default {
     const token = localStorage.getItem("token");
 
     if (token !== undefined || null) {
-      console.log(localStorage.token)
       this.connected = true
-      console.log('test connect')
       tag.$router.push('/post/:id');
 
     }
     else if (token == undefined || null) {
       this.connected = false
-      console.log('test reject')
       tag.$router.push('/');
     }
   },

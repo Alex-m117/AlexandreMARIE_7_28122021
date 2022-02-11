@@ -5,7 +5,9 @@
         <form class="post" @submit.prevent="Modifier">
             <div class="modify_-header">
                 <h1> Modifier la publication </h1>
-                <div class="close" @click="modify_view()"> X </div>
+                <div class="close">
+                    <div class="button__close" @click="modify_view()"> X </div>
+                </div>
             </div>
             <div class="form__modify__post"> 
                 <input
@@ -13,8 +15,8 @@
                     type="text"
                     name="modify"
                     id="text__modify"
-                    placeholder="  Quoi de neuf ?"
-                    />
+                    placeholder="Votre nouveau post"
+                />
             </div>
             <div class="modify__file"> 
                 <input class="file"
@@ -24,7 +26,7 @@
                     name="image"
                     id="file__modify"
                     accept="image/png, image/jpeg"
-                    />
+                />
             </div> 
             <div class="form__valid__modify"> 
                 <button :disabled="!valideModify" class="valid__modify" @click="modifyPost()"> Modifier </button>
@@ -85,21 +87,8 @@ export default {
         onChange(event) {
             this.image = event.target.files[0];
         },
-
-
-
-
-
-
-
     },
 };
-
-
-
-
-
-
 
 </script>
 
@@ -134,29 +123,131 @@ export default {
     align-items: center;
     background-color: #f1f1f1;
     width: 42%;
-    height: 200px;
     border-radius: 20px;
     top:100px;
-
 }
 
 .modify_-header {
     display: flex;
+    align-items: center;
     width: 100%;
 }
 
 h1 {
     display: flex;
-    width: 95%;
+    margin-left: 10%;
+    width: 100%;
     justify-content: center;
 }
 
 .close {
-    width: 20px;
-    height: 20px;
+    width: 15%;
 }
 
+.button__close {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border-radius: 25px;
+    border: 1px solid #312F2F;
+    justify-content: center;
+    align-items: center;
+    color: #312F2F;
+    font-weight: 600;
+    background-color: #D2F1E4;
+}
 
+.form__modify__post {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
 
+#text__modify {
+    width: 70%;
+    border: 2px solid #d3d3d3;
+    border-radius: 20px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.modify__file {
+    display: flex;
+    justify-content: center;
+    width: 70%;
+    margin-bottom: 20px;
+}
+
+.valid__modify {
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    border: 1px solid #312F2F;
+    font-weight: 600;
+    color: #312F2F;
+    background-color: #D2F1E4;
+    margin-bottom: 20px;
+}
+
+// média queries
+
+@media (min-width: 280px) {
+
+.post{
+  width: 95%;
+}
+
+};
+
+@media (max-width: 400px) {
+
+h1 {
+    margin-left: 0;
+    font-size: 20px;
+    width: 90%;
+}
+
+};
+
+@media (min-width: 550px) {
+
+.post {
+  width: 80%;
+}
+
+};
+
+@media (min-width: 700px) {
+
+.post {
+  width: 70%;
+}
+
+};
+
+@media (min-width: 800px) {
+
+.post {
+  width: 60%;
+}
+
+};
+
+@media (min-width: 900px) {
+
+.post {
+  width: 50%;
+}
+
+};
+
+@media (min-width: 1600px) {
+
+.post {
+  width: 40%;
+}
+
+};
 
 </style>

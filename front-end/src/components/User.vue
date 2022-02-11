@@ -126,7 +126,6 @@ export default {
           axios.put(`http://localhost:3000/api/user/account/${userId}`, data, {
             headers: {
               'Accept': 'application/json',
-              'Content-Type': "multipart/form-data",
               Authorization: `Bearer ${token}`,
             },
           })
@@ -194,7 +193,6 @@ export default {
           axios.put(`http://localhost:3000/api/user/account/${userId}`, data, {
             headers: {
               'Accept': 'application/json',
-              'Content-Type': "multipart/form-data",
               Authorization: `Bearer ${token}`,
             },
           })

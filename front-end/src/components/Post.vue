@@ -5,7 +5,7 @@
   <div class="navbar">
     <div class="home__control">
       <router-link :to="{ name: 'User', params: { userId : userId } } ">
-        <fa icon="user"/>
+        <img class="profil__home" v-bind:src="user.photo">
       </router-link>
       <fa icon="sign-out-alt" @click="logOut()" />
     </div>
@@ -51,11 +51,11 @@
         </div>
         <div class="post__moderate">
           <router-link :to="{ params: { id : post.id_post } } ">
-          <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
+            <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
           </router-link>
-          <router-link :to="{ params: { id : post.id_post } } ">
-            <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost()"/>
-          </router-link>
+          <!-- <router-link :to="{ params: { id : post.id_post } } "> -->
+            <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost(post.id_post, post.userId)"/>
+          <!-- </router-link> -->
         </div>
       </div> 
       <div v-if="post.message !='' " class="display__text">
@@ -92,9 +92,7 @@
               <div class="comment__info">
                 <span class="comment__pseudo"> {{ comment.pseudo }} </span>
                 <div class="comment__moderate">
-                  <router-link :to="{ params: { id : comment.id_comment } } ">
                     <fa v-if="comment.userId == userId || admin == true" class="delete__post" icon="trash" @click="deleteComment()"/> 
-                  </router-link> 
                 </div>
               </div>
               <div class="comment__post">
@@ -218,15 +216,13 @@ export default {
         }
       })
     },
-    deletePost: function() {
+    deletePost: function(id_post, userId) {
       const token = localStorage.getItem("token");
       this.userId = localStorage.getItem("userId");
-      const user = localStorage.getItem("user");
       const admin = localStorage.getItem("admin");
-      const postId = this.$route.params.id;
 
-      if (this.userId === user || admin == true)
-      axios.delete (`http://localhost:3000/api/post/${postId}`, {
+      if (this.userId === userId || admin == true)
+      axios.delete (`http://localhost:3000/api/post/${id_post}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': "multipart/form-data",
@@ -353,15 +349,25 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped >
+<style lang="scss" scoped>
 
 section {
   width: 100%;
 }
 
+.profil__home {
+  display: flex;
+  object-fit: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border: 1px solid red;
+}
+
 .home__control {
   margin-top: 20px;
   display: flex;
+  align-items: center;
   flex-direction: row;
   justify-content: flex-end;
   width: 90%;

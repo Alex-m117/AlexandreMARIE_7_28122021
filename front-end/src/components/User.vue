@@ -1,7 +1,6 @@
 <template>
 <section>
 
- 
   <div class="user" >
 
     <div class="user__header">
@@ -62,9 +61,6 @@
     </div>
   </div>
  
-
-
-
 </section>
 </template>
 
@@ -81,6 +77,8 @@ export default {
       userParams: [0],
       userId_crtl: localStorage.getItem("userId"),
       admin: localStorage.getItem("admin"),
+      pseudo: '',
+      biography: '',
     }
   },
 
@@ -450,5 +448,155 @@ section {
   height: 30px;
 }
 
+// Média Queries
+
+@media (min-width: 280px) and (max-width: 400px) {
+
+.user {
+  width: 95%;
+}
+
+.user__profil {
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 70px;
+}
+
+.icon__return {
+  margin-left: 0px;
+}
+
+.delete__user {
+  margin-right: 0px;
+}
+
+.user__return {
+  justify-content: space-around;
+}
+
+#modify__pseudo {
+  font-size: 70%;
+}
+
+#modify__photo {
+  width: 90%;
+}
+
+.modify__name {
+  width: 95%;
+}
+
+.photo__block {
+  width: 100%;
+}
+
+.user__photo {
+  width: 95%;
+}
+
+.user__info {
+  width: 95%;
+}
+
+.modify__bio {
+  width: 100%;
+}
+
+};
+
+@media (min-width: 400px) and (max-width: 660px) {
+
+.user {
+  width: 80%;
+}
+
+.user__profil {
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 70px;
+}
+
+.modify__name {
+  width: 85%;
+}
+
+.photo__block {
+  width: 100%;
+}
+
+.user__photo {
+  width: 85%;
+}
+
+.user__info {
+  width: 85%;
+}
+
+.modify__bio {
+  width: 100%;
+}
+
+};
+
+@media (min-width: 660px) and (max-width: 850px) {
+
+.user {
+  width: 70%;
+}
+
+.user__profil {
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 70px;
+}
+
+.modify__name {
+  width: 60%;
+}
+
+.photo__block {
+  width: 100%;
+}
+
+.user__photo {
+  width: 60%;
+}
+
+.user__info {
+  width: 60%;
+}
+
+.modify__bio {
+  width: 100%;
+}
+
+};
+
+@media (min-width: 900px) {
+
+.user {
+  width: 80%;
+}
+
+};
+
+@media (min-width: 1200px) {
+
+.user {
+  width: 60%;
+}
+
+};
+
+@media (min-width: 1500px) {
+
+.user {
+  width: 50%;
+}
+
+};
 
 </style>

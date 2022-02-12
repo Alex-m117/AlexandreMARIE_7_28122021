@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Auth from './components/Auth.vue';
 import Home from './components/Home.vue';
-import Post from './components/Post.vue';
-import User from './components/User.vue';
 
 const routes = [
     {   
@@ -18,12 +16,12 @@ const routes = [
     {   
         path: '/post/:id',
         name: "Post",
-        component: Post,
+        component: () => import('./components/Post.vue'),
     },
     {   
         path: '/user/:userId',
         name: "User",
-        component: User,
+        component: () => import('./components/User.vue'),
         props: true,
     },
 ];

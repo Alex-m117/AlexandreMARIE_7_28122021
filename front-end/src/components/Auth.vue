@@ -121,7 +121,7 @@ export default {
     validationSignup: function() {
       //eslint-disable-next-line
       const regexEmail = new RegExp ("^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([_\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
-      const regexPseudo = new RegExp ("^([a-zA-Z0-9-_]{2,36})$");
+      const regexPseudo = new RegExp ("^([a-zA-Z0-9-_ ]{2,30})$");
       //eslint-disable-next-line
       const regexPassword = new RegExp ("^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$");
       regexPseudo.test(this.pseudo) ? 

@@ -69,19 +69,19 @@
           <fa icon="comments" /> Commentaires
         </div>
       </div>
-      <router-link :to="{ params: { id : post.id_post } } ">
-        <form class="new__comment" @submit.prevent="Publier" @click="createComment()">
+      <form class="new__comment" @submit.prevent="Publier">
+        <router-link :to="{ params: { id : post.id_post } } ">    
           <input
+            @change="add"
             type="text"
             name="comment"
             id="comment__create"
             placeholder="Ajouter un commentaire"
             required
           />
-          <button class="valid__comment"> Publier </button>
-        </form>
-      </router-link>
-
+        </router-link>
+          <button class="valid__comment" @click="createComment()"> Publier </button>
+      </form>
       <div class="comments" v-for="comment in comments" v-bind:key="comment.postId" > 
         <div v-if="comment.postId == post.id_post" class="comment_id"> 
           <div class="commentaire">
@@ -92,7 +92,7 @@
               <div class="comment__info">
                 <span class="comment__pseudo"> {{ comment.pseudo }} </span>
                 <div class="comment__moderate">
-                    <fa v-if="comment.userId == userId || admin == true" class="delete__post" icon="trash" @click="deleteComment()"/> 
+                    <fa v-if="comment.userId == userId || admin == true" class="delete__post" icon="trash" @click="deleteComment(comment.id_comment, comment.userId)"/> 
                 </div>
               </div>
               <div class="comment__post">
@@ -103,6 +103,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
 <modify v-bind:visible="visible" v-bind:modify_view="modify_view"></modify>
@@ -133,6 +134,7 @@ export default {
       formData: {
         message: null,
         image: null,
+        comment: null,
       },
       visible: false,
     }
@@ -231,7 +233,7 @@ export default {
       })
       .then(response => {
         console.log(response, "post supprimé")
-        this.$router.go();
+        this.getComment();
       })
       .catch(error => {
         console.log(error)
@@ -259,12 +261,17 @@ export default {
         }
       })
     },
+    add: function(event) {
+      this.comment = event.target.value;
+    },
     createComment: function() {
       const token = localStorage.getItem("token");
-      const postId = parseInt(this.$route.params.id);
-      this.comment = document.getElementById('comment__create').value;
+      this.userId = localStorage.getItem("userId");
+      const postId = this.$route.params.id;
+      
       const data = new FormData();
 
+      data.append("userId", this.userId);
       if (this.comment !="") {
         data.append("comment", this.comment);
       }
@@ -277,8 +284,7 @@ export default {
         })
         .then(response => {
           console.log(response)
-          document.getElementById('comment__create').value = "";
-          //this.$router.go();
+          this.$router.go();
           this.getComment();
         })
         .catch(error => {
@@ -286,15 +292,13 @@ export default {
         })
       }
     },
-    deleteComment: function() {
+    deleteComment: function(id_comment, userId) {
       const token = localStorage.getItem("token");
       this.userId = localStorage.getItem("userId");
-      const user = localStorage.getItem("user");
       const admin = localStorage.getItem("admin");
-      const commentId = this.$route.params.id;
 
-      if (this.userId === user || admin == true)
-      axios.delete (`http://localhost:3000/api/post/comments/${commentId}`, {
+      if (this.userId == userId || admin == true)
+      axios.delete (`http://localhost:3000/api/post/comments/${id_comment}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': "multipart/form-data",
@@ -309,7 +313,6 @@ export default {
         console.log(error)
       })
     },
-
     logOut: function() {
       localStorage.removeItem('user')
       localStorage.removeItem('admin')

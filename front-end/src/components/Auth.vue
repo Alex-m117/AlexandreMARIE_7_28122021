@@ -31,7 +31,9 @@
           <p v-if="errors.password && mode == 'login'" class="crtl">8 caractères, 1 majuscule, 1 chiffre</p>
         </div>
 
-          <button :disabled= "!valideForm" class="validLogin" v-if="mode == 'login' " @click="login()"> Connexion </button>
+        <p v-if="invalid.login == true && mode == 'login'" class="account__error"> <fa icon="exclamation"/> Email ou mot de passe incorrect </p>
+
+          <button :disabled="!valideForm" class="validLogin" v-if="mode == 'login' " @click="login()"> Connexion </button>
       </form>
 
       <form @submit.prevent="Inscription" v-if="mode == 'signup'" class="form__auth">
@@ -66,8 +68,9 @@
           <p v-if="errors.password && mode == 'signup'" class="crtl">8 caractères, 1 majuscule, 1 chiffre</p>
         </div>
   
-        <p v-if="accountError && mode == signup" class="account__error"> Email deja utilisé </p>
-         <button :disabled="!valideForm" class="validSignup" v-if="mode == 'signup' " @click="signup()"> Inscription </button>
+        <p v-if="invalid.signup == true && mode == 'signup'" class="account__error"> <fa icon="exclamation"/> Email déjà utilisé </p>
+
+          <button :disabled="!valideForm" class="validSignup" v-if="mode == 'signup' " @click="signup()"> Inscription </button>
       </form>
 
    </div>
@@ -90,7 +93,11 @@ export default {
         email: false,
         password: false,
       },
-      accountError: false,
+      invalid: {
+        signup: false,
+        login: false,
+      }
+      
     }
   },
   computed:{
@@ -174,8 +181,9 @@ export default {
           tag.$router.push('Home')
         })
         .catch(error => {
-        
-          console.log(error)
+          if(error.response.status === 403) {
+            this.invalid.login = true
+          }
         })
       }
     }, 
@@ -202,14 +210,20 @@ export default {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.userId);
                 localStorage.setItem('admin', response.data.admin);
-                tag.$router.push('Home')
+                tag.$router.push('Home');
                 console.log(response);
+                return;
               })
               .catch(error => {
-                console.log(error.response)
+                console.log(error)
+                 if(error.response.status === 403) {
+                  this.invalid.login = true
+                 }
               })
-          .catch(function (error) {
-            console.log(error.response)
+          .catch( function(error) {
+            if(error.response.status === 403) {
+              this.invalid.signup = true
+            }
           })
         })
       }
@@ -318,6 +332,11 @@ input {
   border: none;
   border-radius: 15px;
   height: 30px;
+}
+
+.account__error {
+  font-weight: 600;
+  color: rgb(204, 56, 56);
 }
 
 button:disabled {

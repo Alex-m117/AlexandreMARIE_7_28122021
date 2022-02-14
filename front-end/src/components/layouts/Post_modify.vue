@@ -155,6 +155,12 @@ h1 {
     color: #312F2F;
     font-weight: 600;
     background-color: #D2F1E4;
+    cursor: pointer;
+    &:hover {
+        border: 2px solid #5c5c5cb9;
+        box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;
+        transform: scale(1.1);
+	}
 }
 
 .form__modify__post {
@@ -169,6 +175,11 @@ h1 {
     border-radius: 20px;
     padding: 10px;
     margin-bottom: 20px;
+    cursor: pointer;
+    &:hover {
+        border: 2px solid #5c5c5cb9;
+        box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;
+	}
 }
 
 .modify__file {
@@ -188,6 +199,12 @@ h1 {
     color: #312F2F;
     background-color: #D2F1E4;
     margin-bottom: 20px;
+    cursor: pointer;
+    &:hover {
+        box-shadow: 2px 2px 2px 2px #D3D3D3;
+        opacity: 0.9;
+        transform: scale(1.1);
+    }
 }
 
 // média queries

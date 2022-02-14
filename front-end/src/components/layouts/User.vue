@@ -258,7 +258,7 @@ section {
 .user {
   display: flex;
   flex-direction: column;
-  box-shadow: 5px 5px 5px 5px #D3D3D3;
+  box-shadow: #D3D3D3 0px 2px 4px 0px, #D3D3D3 0px 2px 16px 0px;
   border-radius: 25px;
   margin-top: 100px;
   margin-bottom: 100px;
@@ -280,13 +280,6 @@ section {
   margin-top: 30px;
 }
 
-.fa-arrow-circle-left {
-  &:hover{
-    transform: scale(1.2);
-    opacity: 0.9;
-	};
-}
-
 .delete__user {
   margin-right: 30px;
   border: none;
@@ -296,11 +289,6 @@ section {
   font-weight: 600;
   padding: 10px;
   border-radius: 20px;
-   &:hover{
-    box-shadow: 1px 1px 1px 1px #D3D3D3;
-    transform: scale(1.04);
-    opacity: 0.9;
-	};
 }
 
 .icon__return {
@@ -394,9 +382,6 @@ section {
   object-fit: cover;
   align-items: center;
   border-radius: 15px;
-  &:hover{
-    box-shadow: 3px 3px 3px 3px #D2F1E4;
-	};
 }
 
 .modify__photo {
@@ -445,13 +430,6 @@ section {
   border: none;
 }
 
-.modify__name {
-    &:hover {
-    border: 2px solid #5c5c5cb9;
-    box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;
-	}
-}
-
 .modify__biography {
   width: 30%;
   border: none;
@@ -468,10 +446,6 @@ section {
   border: 2px solid #eaeaea;
   width: 90%;
   height: 30px;
-  &:hover {
-    border: 2px solid #5c5c5cb9;
-    box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;
-	}
 }
 
 // Média Queries

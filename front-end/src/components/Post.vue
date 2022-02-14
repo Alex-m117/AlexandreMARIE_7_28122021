@@ -53,9 +53,7 @@
           <router-link :to="{ params: { id : post.id_post } } ">
             <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
           </router-link>
-          <!-- <router-link :to="{ params: { id : post.id_post } } "> -->
             <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost(post.id_post, post.userId)"/>
-          <!-- </router-link> -->
         </div>
       </div> 
       <div v-if="post.message !='' " class="display__text">
@@ -66,11 +64,13 @@
       </div>
       <div class="post__comment"> 
         <div class="comment__status">
-          <fa icon="comments" /> Commentaires
+          <span class="comments__link"> 
+            <fa icon="comments" />  Commentaires 
+          </span>
         </div>
       </div>
       <form class="new__comment" @submit.prevent="Publier">
-        <router-link :to="{ params: { id : post.id_post } } ">    
+        <router-link class="comment__submit" :to="{ params: { id : post.id_post } } ">    
           <input
             @change="add"
             type="text"
@@ -284,6 +284,7 @@ export default {
         })
         .then(response => {
           console.log(response)
+          //document.getElementById('comment__create').value = " ";
           this.$router.go();
           this.getComment();
         })
@@ -307,7 +308,7 @@ export default {
       })
       .then(response => {
         console.log(response, "post supprimé")
-        this.$router.go();
+        this.getComment();
       })
       .catch(error => {
         console.log(error)
@@ -380,9 +381,20 @@ section {
   font-size: 30px;
 }
 
+.profil__home {
+  cursor: pointer;
+  &:hover{
+    transform: scale(1.1);
+	};
+}
+
 .fa-sign-out-alt {
   margin-left: 25px;
   font-size: 30px;
+  cursor: pointer;
+  &:hover{
+    transform: scale(1.1);
+	};
 }
 
 .invisible {
@@ -406,7 +418,10 @@ section {
   width: 80%;
   align-items: center;
   border-radius: 25px;
-  box-shadow: 3px 3px 3px 3px #D3D3D3;
+  box-shadow: #D3D3D3 0px 2px 4px 0px, #D3D3D3 0px 2px 16px 0px;
+  &:hover {
+    box-shadow: 3px 3px 3px 3px #D2F1E4;
+  }
 }
 
 .form__post {
@@ -423,6 +438,10 @@ section {
   margin-top: 15px;
   margin-bottom: 10px;
   padding: 15px;
+  &:hover {
+    border: 2px solid #5c5c5cb9;
+    box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;
+	}
 }
 
 .placeholder {
@@ -452,10 +471,16 @@ section {
    width: 40%;
    height: 30px;
    font-weight: 600;
-   background-color: #d3d3d3;
+   color: #312F2F;
+   border: 2px solid #D3D3D3;
+   background-color:#D2F1E4;
    border-radius: 15px;
    margin-bottom: 15px;
    cursor: pointer;
+    &:hover {
+      box-shadow: 1px 1px 1px 1px #D3D3D3;
+      opacity: 0.9;
+    }
 }
 
 .post {
@@ -469,8 +494,11 @@ section {
   flex-direction: column;
   width: 80%;
   border-radius: 20px;
-  box-shadow: 3px 3px 3px 3px #D3D3D3;
-}
+  box-shadow: #D3D3D3 0px 2px 4px 0px, #D3D3D3 0px 2px 16px 0px;
+  &:hover{
+    box-shadow: 3px 3px 3px 3px #D2F1E4;
+	};
+}   
 
 .profil__info {
   display: flex;
@@ -485,6 +513,10 @@ section {
   border-radius: 25px;
   margin-right: 10px;
   border: 1px solid red;
+  &:hover{
+    box-shadow: 1px 1px 1px 1px #D3D3D3;
+    transform: scale(1.04);
+	};
 }
 
 .profil__author {
@@ -494,10 +526,29 @@ section {
   width: 90%;
 }
 
+.profil__pseudo {
+  font-weight: 500;
+}
+
+.profil__date {
+  font-style: italic;
+  color:#a1a1a1;
+}
+
 .post__moderate {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+}
+
+.fa-edit {
+  font-size: 14px;
+  color: #312F2F;
+  cursor: pointer;
+  &:hover {
+    color: #345BE2;
+    transform: scale(1.5);
+	}; 
 }
 
 .display__text {
@@ -517,7 +568,6 @@ section {
   object-fit: cover;
   width: 100%;
   height: 500px;;
-  border: 2px solid red;
 }
 
 //Commentaires
@@ -526,8 +576,15 @@ section {
   display: flex;
 }
 
+.fa-comments {
+  color:rgb(50, 91, 226);
+}
+
 .comment__status {
-  margin: 10px;
+  margin: 10px 10px 0px 10px;
+  font-style: italic;
+  font-size: 15px;
+  color: #312F2F;
 }
 
 .new__comment {
@@ -539,13 +596,23 @@ section {
   margin-bottom: 30px;
 }
 
-#comment__create {
+.comment__submit {
   width: 70%;
+}
+
+#comment__create {
+  width: 90%;
   border: 2px solid #d3d3d3;
+  background-color: #f1f1f1fd;
   border-radius: 20px;
   padding: 10px;
   margin-top: 10px;
   margin-right: 10px;
+  cursor: pointer;
+  &:hover {
+    border: 2px solid #5c5c5cb9;
+    box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;
+	}
 }
 
 .valid__comment {
@@ -553,10 +620,16 @@ section {
   border-style: none;
   text-decoration: none;
   font-weight: 600;
-  background-color: #d3d3d3;
+  color: #312F2F;
+  background-color: #D2F1E4;
+  border: 2px solid #d3d3d3 ;
   border-radius: 15px;
   padding: 10px;
   cursor: pointer;
+  &:hover {
+    box-shadow: 1px 1px 1px 1px #D3D3D3;
+    opacity: 0.9;
+  }
 }
 
 .commentaire {
@@ -574,11 +647,30 @@ section {
   min-width: 40%;
   border-radius: 25px;
   width: auto;
-  background-color: #D2F0E4;
+  background-color: #eeeeee;
+  box-shadow: 1px 1px 1px 1px #D3D3D3;
   margin-left: 10px;
   margin-right: 10px;
   padding-left: 10px;
   padding-right: 10px;
+  &:hover {
+    box-shadow: 2px 2px 2px 2px #D2F1E4;
+    transform: scale(1.04);
+	}; 
+};
+
+.comment__pseudo {
+  font-weight: 500;
+}
+
+.fa-trash {
+  font-size: 14px;
+  color: #312F2F;
+  cursor: pointer;
+  &:hover {
+    color: #345BE2;
+    transform: scale(1.5);
+	}; 
 }
 
 .comment__info {
@@ -597,6 +689,10 @@ section {
   border: 1px solid red;
   object-fit: cover;
   margin-top: 5px;
+  &:hover{
+    box-shadow: 1px 1px 1px 1px #D3D3D3;
+    transform: scale(1.04);
+	};
 }
 
 .comment__moderate {
@@ -617,7 +713,7 @@ section {
 
 // média queries
 
-@media (min-width: 280px) {
+@media (min-width: 280px) and (max-width: 550px) {
 
 .profil__post{
   width: 95%;
@@ -637,7 +733,7 @@ section {
 
 };
 
-@media (min-width: 550px) {
+@media (min-width: 550px) and (max-width: 700px) {
 
 .profil__post{
   width: 80%;
@@ -651,9 +747,13 @@ section {
   width: 90%;
 }
 
+.display__image {
+  height: 400px;
+}
+
 };
 
-@media (min-width: 700px) {
+@media (min-width: 700px)and (max-width: 800px) {
 
 .profil__post{
   width: 70%;
@@ -665,6 +765,10 @@ section {
 
 .home__control {
   width: 85%;
+}
+
+.display__image {
+  height: 450px;
 }
 
 };
@@ -697,6 +801,10 @@ section {
 
 .home__control {
   width: 75%;
+}
+
+.display__image {
+  height: 500px;
 }
 
 };

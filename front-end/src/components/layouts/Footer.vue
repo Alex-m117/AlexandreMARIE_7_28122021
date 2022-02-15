@@ -23,7 +23,8 @@ footer {
 };
 
 ul {
-    width: 90%;
+    padding:0;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -37,6 +38,16 @@ a {
     color:white;
     text-decoration: none;
     font-size: 16px;
+};
+
+// Média Queries
+
+@media (min-width: 280px) and (max-width: 400px) {
+
+a {
+     font-size: 14px;
+}
+
 };
 
 </style>

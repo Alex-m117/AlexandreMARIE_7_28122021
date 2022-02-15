@@ -74,6 +74,7 @@ exports.getAllPosts = (req, res, next) => {
       res.status(404).json ({ message: "Récupération des posts impossible !" });
       return;
     }
+
       res.status(200).json ({ result }); 
   });
 };

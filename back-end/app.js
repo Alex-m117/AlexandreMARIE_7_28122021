@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-//app.use(cors({origin:true}));
+app.use(cors({ origin: ["http://localhost:8080/", "http://localhost:3000/"] }));
 
 app.use(helmet());
 

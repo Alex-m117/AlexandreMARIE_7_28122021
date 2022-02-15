@@ -5,7 +5,7 @@
   <div class="navbar">
     <div class="home__control">
       <router-link :to="{ name: 'User', params: { userId : userId } } ">
-        <img class="profil__home" v-bind:src="user.photo">
+        <img class="profil__home" v-bind:src="user.photo" crossorigin>
       </router-link>
       <fa icon="sign-out-alt" @click="logOut()" />
     </div>
@@ -16,6 +16,7 @@
       <div class="form__post"> 
         <input
           v-model="message"
+          maxlength="500"
           type="text"
           name="message"
           id="text__create"
@@ -43,7 +44,7 @@
     <div class="profil__post">
       <div class="profil__info">
       <router-link :to="{ name: 'User', params: { userId : post.userId } } ">
-        <img class="profil__pic" v-bind:src="post.photo">
+        <img class="profil__pic" v-bind:src="post.photo" crossorigin>
       </router-link>
         <div class="profil__author">
           <span class="profil__pseudo"> {{ post.pseudo }} </span>
@@ -60,13 +61,13 @@
         <span class="post__message"> {{ post.message }} </span>
       </div>
       <div v-if="post.image" class="display__image">
-        <span class="post__image"> <img v-bind:src="post.image" class="image"> </span>
+        <span class="post__image"> <img v-bind:src="post.image" class="image" crossorigin> </span>
       </div>
       <div class="post__comment"> 
         <div class="comment__status">
           <span class="comments__link"> 
             <fa icon="comments" />  Commentaires 
-          </span>
+          </span> 
         </div>
       </div>
       <form class="new__comment" @submit.prevent="Publier">
@@ -75,6 +76,7 @@
             @change="add"
             type="text"
             name="comment"
+            maxlength="300"
             id="comment__create"
             placeholder="Ajouter un commentaire"
             required
@@ -86,7 +88,7 @@
         <div v-if="comment.postId == post.id_post" class="comment_id"> 
           <div class="commentaire">
           <router-link :to="{ name: 'User', params: { userId : comment.userId } } ">
-            <img class="comment__photo" v-bind:src="comment.photo">
+            <img class="comment__photo" v-bind:src="comment.photo" crossorigin>
           </router-link>
             <div class="comment__block">
               <div class="comment__info">
@@ -182,7 +184,7 @@ export default {
         data.append("image", this.image,);
       }
       if (this.message || this.image) {
-        axios.post('http://localhost:3000/api/post/add/', data, {
+        axios.post('http://localhost:8080/api/post/add/', data, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': "multipart/form-data",
@@ -203,7 +205,7 @@ export default {
       this.userId = localStorage.getItem("userId");
 
       const tag = this;
-      axios.get('http://localhost:3000/api/post/', {
+      axios.get('http://localhost:8080/api/post/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -224,7 +226,7 @@ export default {
       const admin = localStorage.getItem("admin");
 
       if (this.userId == userId || admin == true)
-      axios.delete (`http://localhost:3000/api/post/${id_post}`, {
+      axios.delete (`http://localhost:8080/api/post/${id_post}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': "multipart/form-data",
@@ -245,7 +247,7 @@ export default {
       const postId = this.$route.params.id;
       const tag = this;
 
-      axios.get(`http://localhost:3000/api/post/${postId}/comments/`, {
+      axios.get(`http://localhost:8080/api/post/${postId}/comments/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -276,7 +278,7 @@ export default {
         data.append("comment", this.comment);
       }
       if (this.comment) {
-        axios.post(`http://localhost:3000/api/post/${postId}/comments/`, data, {
+        axios.post(`http://localhost:8080/api/post/${postId}/comments/`, data, {
           headers: {
             'Content-type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -284,7 +286,6 @@ export default {
         })
         .then(response => {
           console.log(response)
-          //document.getElementById('comment__create').value = " ";
           this.$router.go();
           this.getComment();
         })
@@ -299,7 +300,7 @@ export default {
       const admin = localStorage.getItem("admin");
 
       if (this.userId == userId || admin == true)
-      axios.delete (`http://localhost:3000/api/post/comments/${id_comment}`, {
+      axios.delete (`http://localhost:8080/api/post/comments/${id_comment}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': "multipart/form-data",
@@ -331,15 +332,15 @@ export default {
     const userId = this.userId;
     const tag = this;
 
-    axios.get(`http://localhost:3000/api/user/account/${userId}`, {
+    axios.get(`http://localhost:8080/api/user/account/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
     .then(response => {
       this.data = response.data.result[0];
-      const user = (JSON.parse(JSON.stringify(this.data)));
-      localStorage.setItem('user', user.id);
+      this.user = (JSON.parse(JSON.stringify(this.data)));
+      localStorage.setItem('user', this.user.id); 
     })
     .catch(error => {
       if(error.response && error.response.status === 404) {
@@ -365,7 +366,6 @@ section {
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  border: 1px solid red;
 }
 
 .home__control {
@@ -419,9 +419,6 @@ section {
   align-items: center;
   border-radius: 25px;
   box-shadow: #D3D3D3 0px 2px 4px 0px, #D3D3D3 0px 2px 16px 0px;
-  &:hover {
-    box-shadow: 3px 3px 3px 3px #D2F1E4;
-  }
 }
 
 .form__post {
@@ -455,7 +452,6 @@ section {
 }
 
 .file {
-  text-overflow: hidden;
   font-weight: 600;
 }
 
@@ -483,6 +479,11 @@ section {
     }
 }
 
+button:disabled {
+  background-color: #D3D3D3;
+  color: black;
+}
+
 .post {
   display:flex;
   justify-content: center;
@@ -495,9 +496,6 @@ section {
   width: 80%;
   border-radius: 20px;
   box-shadow: #D3D3D3 0px 2px 4px 0px, #D3D3D3 0px 2px 16px 0px;
-  &:hover{
-    box-shadow: 3px 3px 3px 3px #D2F1E4;
-	};
 }   
 
 .profil__info {
@@ -512,7 +510,6 @@ section {
   height: 50px;
   border-radius: 25px;
   margin-right: 10px;
-  border: 1px solid red;
   &:hover{
     box-shadow: 1px 1px 1px 1px #D3D3D3;
     transform: scale(1.04);
@@ -568,6 +565,16 @@ section {
   object-fit: cover;
   width: 100%;
   height: 500px;;
+}
+
+.post__image {
+  width: 100%;
+  height: 500px;
+}
+
+.image {
+  width: 100%;
+  height: 100% ;
 }
 
 //Commentaires
@@ -655,7 +662,6 @@ section {
   padding-right: 10px;
   &:hover {
     box-shadow: 2px 2px 2px 2px #D2F1E4;
-    transform: scale(1.04);
 	}; 
 };
 
@@ -686,7 +692,6 @@ section {
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  border: 1px solid red;
   object-fit: cover;
   margin-top: 5px;
   &:hover{
@@ -728,7 +733,11 @@ section {
 }
 
 .display__image {
-  height: 350px;
+  height: 300px;
+}
+
+#comment__create {
+  width: 80%;
 }
 
 };

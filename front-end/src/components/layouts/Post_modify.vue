@@ -45,6 +45,11 @@ export default {
     name: 'Post_modify',
     props: ['visible', 'modify_view'],
 
+    data: function() {
+        return {
+            modify:'',
+        }
+    },
     computed: {      
         valideModify: function() {
             if (this.modify !="") {
@@ -205,6 +210,11 @@ h1 {
         opacity: 0.9;
         transform: scale(1.1);
     }
+}
+
+button:disabled {
+  background-color: #D3D3D3;
+  color: black;
 }
 
 // média queries

@@ -28,7 +28,7 @@
       <div class="user__profil">
         <div class="photo__block">
           <div class="user__photo">
-          <img class="user__pic" v-bind:src="this.userParams[0].photo">
+          <img class="user__pic" v-bind:src="this.userParams[0].photo" crossorigin>
             <form v-if=" userId == userId_crtl || admin == true" @submit.prevent="Modifier" class="modify__pic">
               <input
                 @change="onChange"
@@ -91,7 +91,7 @@ export default {
       const token = localStorage.getItem("token");
       const userId = this.$route.params.userId;
 
-      axios.get(`http://localhost:3000/api/user/account/${userId}`, {
+      axios.get(`http://localhost:8080/api/user/account/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -121,7 +121,7 @@ export default {
       }
       if (userId == user || admin == true) {
         if (this.pseudo) {
-          axios.put(`http://localhost:3000/api/user/account/${userId}`, data, {
+          axios.put(`http://localhost:8080/api/user/account/${userId}`, data, {
             headers: {
               'Accept': 'application/json',
               Authorization: `Bearer ${token}`,
@@ -188,7 +188,7 @@ export default {
       }
       if (userId == user || admin == true) {
         if (this.biography) {
-          axios.put(`http://localhost:3000/api/user/account/${userId}`, data, {
+          axios.put(`http://localhost:8080/api/user/account/${userId}`, data, {
             headers: {
               'Accept': 'application/json',
               Authorization: `Bearer ${token}`,
@@ -218,7 +218,7 @@ export default {
 
       if (userId == user || admin == true) {
         if (confirm("Confirmez-vous la suppression de votre compte, cette action est irréversible!"))
-          axios.delete(`http://localhost:3000/api/user/account/${userId}`, {
+          axios.delete(`http://localhost:8080/api/user/account/${userId}`, {
             headers: {
               'Accept': 'application/json',
               'Content-Type': "multipart/form-data",
@@ -227,11 +227,16 @@ export default {
           })
           .then(response => {
             console.log(response)
+            if (admin == true) {
+              tag.$router.push('/home')
+            }
+            else {
             localStorage.removeItem('user')
             localStorage.removeItem('admin')
             localStorage.removeItem('userId')
             localStorage.removeItem('token')
             tag.$router.push('/')
+            }
           })
           .catch(error => {
             if(error.response && error.response.status === 401) {
@@ -390,13 +395,9 @@ section {
   display: flex;
   flex-direction: column;
   width: 80%;
-  box-shadow: 3px 3px 3px 3px #D3D3D3;
-  object-fit: cover;
+  box-shadow: 1px 1px 2px 2px #D3D3D3;
   align-items: center;
   border-radius: 15px;
-  &:hover{
-    box-shadow: 3px 3px 3px 3px #D2F1E4;
-	};
 }
 
 .modify__photo {
@@ -421,7 +422,6 @@ section {
 
 .user__pic {
   width: 100%;
-  border: 2px solid green;
   border-radius: 15px;
   height: 300px;
 }

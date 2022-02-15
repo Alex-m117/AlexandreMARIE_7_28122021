@@ -14,6 +14,7 @@
         <div class="form__login">
         <input v-if="mode == 'login'"
           v-model="email"
+          maxlength="50"
           id="email__login" 
           type="email"  
           placeholder="E-mail"
@@ -24,6 +25,7 @@
         <div class="form__login">
           <input v-if="mode == 'login'"
           v-model="password"
+          maxlength="100"
           id="password__login" 
           type="password" 
           placeholder="Mot de passe"
@@ -41,8 +43,9 @@
         <div class="form__signup">
           <input v-if="mode == 'signup'"
           v-model="pseudo"
+          maxlength="20"
           id="pseudo__signup" 
-          type="pseudo" 
+          type="pseudo"
           placeholder="Pseudonyme"
           required>
           <p v-if="errors.pseudo && mode == 'signup'" class="crtl">Pseudo incorrect</p>
@@ -51,6 +54,7 @@
         <div class="form__signup">
           <input v-if="mode == 'signup'"
           v-model="email"
+          maxlength="50"
           id="email__signup" 
           type="email"  
           placeholder="E-mail"
@@ -61,6 +65,7 @@
         <div class="form__signup">
           <input v-if="mode == 'signup'"
           v-model="password"
+          maxlength="100"
           id="password__signup" 
           type="password" 
           placeholder="Mot de passe"

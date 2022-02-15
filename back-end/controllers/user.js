@@ -182,11 +182,14 @@ exports.deleteAccount = (req, res, next) => {
   data.query(account, id,(err, result) => {
     if (id == req.auth.userId || req.admin) {  
       if (err) { console.log(err) };
-      if(result[0].photo || null) {
+      if(result[0].photo != "http://localhost:3000/images/default.png") {
         const split = result[0].photo.split('/images/')[1];
         fs.unlink(`images/${split}`, () => {
           if (err) console.log(err);
         });
+        if(result[0].photo = "http://localhost:3000/images/default.png") {
+          console.log('image par defaut sauvegardée');
+        }
       };
       const delAccount = `DELETE FROM users WHERE id = ?`;
       data.query(delAccount, id,(err, result) => {

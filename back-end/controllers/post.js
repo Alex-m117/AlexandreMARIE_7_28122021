@@ -279,21 +279,6 @@ exports.deleteComment = (req, res, next) => {
   }); 
 };
 
-exports.likePost = (req, res, next) => {
-
-  const userId = token.tokenUserId(req);
-  const { id } = req.params;
-console.log(req.body)
-  const select = `SELECT * FROM likes`;
-  data.query(select, id,(err, result) => {
-    if (err) { console.log(err) };
-
-  });
 
 
 
-
-
-
-
-};

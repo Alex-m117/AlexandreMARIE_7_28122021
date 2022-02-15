@@ -223,7 +223,7 @@ export default {
       this.userId = localStorage.getItem("userId");
       const admin = localStorage.getItem("admin");
 
-      if (this.userId === userId || admin == true)
+      if (this.userId == userId || admin == true)
       axios.delete (`http://localhost:3000/api/post/${id_post}`, {
         headers: {
           'Accept': 'application/json',

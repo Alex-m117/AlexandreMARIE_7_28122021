@@ -413,6 +413,8 @@ section {
 }
 
 #modify__photo {
+  display: flex;
+  width: 90%;
   font-weight: 600;
   color: #312F2F;
 }

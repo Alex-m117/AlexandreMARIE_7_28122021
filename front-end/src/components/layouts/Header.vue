@@ -1,6 +1,6 @@
 <template>
     <header> 
-            <img src="../../assets/images/logo_white.png" alt="Groupomania">
+          <img src="../../assets/images/logo_white.png" alt="Groupomania">
     </header>
 </template>
 

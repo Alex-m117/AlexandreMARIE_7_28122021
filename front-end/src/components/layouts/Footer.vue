@@ -17,8 +17,11 @@ export default {
 
 footer {
     display: flex;
+    position: fixed;
+    bottom: 0;
     width: 100%;
     height: 50px;
+    margin-top: 10px;
     background-color: #303030;
 };
 

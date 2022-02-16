@@ -1,45 +1,44 @@
 <template>
   
-  <div class="modify__post" v-if="visible">
-    <div class="overlay">
-        <form class="post" @submit.prevent="Modifier">
-            <div class="modify_-header">
-                <h1> Modifier la publication </h1>
-                <div class="close">
-                    <div class="button__close" @click="modify_view()"> X </div>
+    <div class="modify__post" v-if="visible">
+        <div class="overlay">
+            <form class="post" @submit.prevent="Modifier">
+                <div class="modify_-header">
+                    <h1> Modifier la publication </h1>
+                    <div class="close">
+                        <div class="button__close" @click="modify_view()"> X </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form__modify__post"> 
-                <input
-                    v-model="modify"
-                    type="text"
-                    name="modify"
-                    id="text__modify"
-                    placeholder="Votre nouveau post"
-                />
-            </div>
-            <div class="modify__file"> 
-                <input class="file"
-                    @change="onChange"
-                    ref="file"
-                    type="file"
-                    name="image"
-                    id="file__modify"
-                    accept="image/png, image/jpeg"
-                />
-            </div> 
-            <div class="form__valid__modify"> 
-                <button :disabled="!valideModify" class="valid__modify" @click="modifyPost()"> Modifier </button>
-            </div>
-        </form> 
+                <div class="form__modify__post"> 
+                    <input
+                        v-model="modify"
+                        type="text"
+                        name="modify"
+                        id="text__modify"
+                        placeholder="Votre nouveau post"
+                    />
+                </div>
+                <div class="modify__file"> 
+                    <input class="file"
+                        @change="onChange"
+                        ref="file"
+                        type="file"
+                        name="image"
+                        id="file__modify"
+                        accept="image/png, image/jpeg, image/gif"
+                    />
+                </div> 
+                <div class="form__valid__modify"> 
+                    <button :disabled="!valideModify" class="valid__modify" @click="modifyPost()"> Modifier </button>
+                </div>
+            </form> 
+        </div>
     </div>
-  </div>
 
 </template>
 
 <script>
 import axios from "axios";
-
 
 export default {
     name: 'Post_modify',

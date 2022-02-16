@@ -2,7 +2,6 @@
 <section>
 
   <div class="user" >
-
     <div class="user__header">
       <div class="user__return">
         <router-link :to="('/home')">
@@ -60,6 +59,7 @@
         </div>
     </div>
   </div>
+  <div class="user__footer"></div>
  
 </section>
 </template>
@@ -260,7 +260,7 @@ section {
   flex-direction: column;
   box-shadow: #D3D3D3 0px 2px 4px 0px, #D3D3D3 0px 2px 16px 0px;
   border-radius: 25px;
-  margin-top: 100px;
+  margin-top: 80px;
   margin-bottom: 100px;
   width: 80%;
 }
@@ -446,6 +446,10 @@ section {
   border: 2px solid #eaeaea;
   width: 90%;
   height: 30px;
+}
+
+.user__footer {
+  margin-top: 30px;
 }
 
 // Média Queries

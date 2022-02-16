@@ -301,6 +301,7 @@ section {
   font-weight: 600;
   padding: 10px;
   border-radius: 20px;
+  cursor: pointer;
    &:hover{
     box-shadow: 1px 1px 1px 1px #D3D3D3;
     transform: scale(1.04);
@@ -344,7 +345,8 @@ section {
   color: #312F2F;
   background-color: #D2F1E4;
   width: 30%;
-  height: 30px; 
+  height: 30px;
+  cursor: pointer;
 }
 
 #modify__pseudo {
@@ -410,7 +412,8 @@ section {
   color: #312F2F;
   background-color: #D2F1E4;
   width: 30%;
-  height: 30px; 
+  height: 30px;
+  cursor: pointer;
 }
 
 #modify__photo {
@@ -418,6 +421,7 @@ section {
   width: 90%;
   font-weight: 600;
   color: #312F2F;
+  cursor: pointer;
 }
 
 .user__pic {
@@ -462,6 +466,7 @@ section {
   background-color: #D2F1E4;
   color: #312F2F;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .modify__bio {

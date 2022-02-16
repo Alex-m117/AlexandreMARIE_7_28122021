@@ -30,7 +30,7 @@
           type="file"
           name="image"
           id="file__create"
-          accept="image/png, image/jpeg"
+          accept="image/png, image/jpeg, image/gif"
         />
       </div> 
       <div class="form__valid"> 
@@ -39,74 +39,79 @@
     </form> 
   </div>
 
-  <div class="post" v-for="post in posts" v-bind:key="post.id_post">
-
-    <div class="profil__post">
-      <div class="profil__info">
-      <router-link :to="{ name: 'User', params: { userId : post.userId } } ">
-        <img class="profil__pic" v-bind:src="post.photo" crossorigin>
-      </router-link>
-        <div class="profil__author">
-          <span class="profil__pseudo"> {{ post.pseudo }} </span>
-          <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
-        </div>
-        <div class="post__moderate">
-          <router-link :to="{ params: { id : post.id_post } } ">
-            <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
-          </router-link>
-            <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost(post.id_post, post.userId)"/>
-        </div>
-      </div> 
-      <div v-if="post.message !='' " class="display__text">
-        <span class="post__message"> {{ post.message }} </span>
-      </div>
-      <div v-if="post.image" class="display__image">
-        <span class="post__image"> <img v-bind:src="post.image" class="image" crossorigin> </span>
-      </div>
-      <div class="post__comment"> 
-        <div class="comment__status">
-          <span class="comments__link"> 
-            <fa icon="comments" />  Commentaires 
-          </span> 
-        </div>
-      </div>
-      <form class="new__comment" @submit.prevent="Publier">
-        <router-link class="comment__submit" :to="{ params: { id : post.id_post } } ">    
-          <input
-            @change="add"
-            type="text"
-            name="comment"
-            maxlength="300"
-            id="comment__create"
-            placeholder="Ajouter un commentaire"
-            required
-          />
+  <div v-if="displayPost">
+    <div class="post" v-for="post in posts" v-bind:key="post.id_post">
+      <div class="profil__post">
+        <div class="profil__info">
+        <router-link :to="{ name: 'User', params: { userId : post.userId } } ">
+          <img class="profil__pic" v-bind:src="post.photo" crossorigin>
         </router-link>
-          <button class="valid__comment" @click="createComment()"> Publier </button>
-      </form>
-      <div class="comments" v-for="comment in comments" v-bind:key="comment.postId" > 
-        <div v-if="comment.postId == post.id_post" class="comment_id"> 
-          <div class="commentaire">
-          <router-link :to="{ name: 'User', params: { userId : comment.userId } } ">
-            <img class="comment__photo" v-bind:src="comment.photo" crossorigin>
+          <div class="profil__author">
+            <span class="profil__pseudo"> {{ post.pseudo }} </span>
+            <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
+          </div>
+          <div class="post__moderate">
+            <router-link :to="{ params: { id : post.id_post } } ">
+              <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
+            </router-link>
+              <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost(post.id_post, post.userId)"/>
+          </div>
+        </div> 
+        <div v-if="post.message !='' " class="display__text">
+          <span class="post__message"> {{ post.message }} </span>
+        </div>
+        <div v-if="post.image" class="display__image">
+          <span class="post__image"> <img v-bind:src="post.image" class="image" crossorigin> </span>
+        </div>
+        <div class="post__comment"> 
+          <div class="comment__status">
+            <span class="comments__link"> 
+              <fa icon="comments" />  Commentaires 
+            </span> 
+          </div>
+        </div>
+        <form class="new__comment" @submit.prevent="Publier">
+          <router-link class="comment__submit" :to="{ params: { id : post.id_post } } ">    
+            <input
+              @change="add"
+              type="text"
+              name="comment"
+              maxlength="300"
+              id="comment__create"
+              placeholder="Ajouter un commentaire"
+              required
+            />
           </router-link>
-            <div class="comment__block">
-              <div class="comment__info">
-                <span class="comment__pseudo"> {{ comment.pseudo }} </span>
-                <div class="comment__moderate">
-                    <fa v-if="comment.userId == userId || admin == true" class="delete__post" icon="trash" @click="deleteComment(comment.id_comment, comment.userId)"/> 
+          <button class="valid__comment" @click="createComment()"> Publier </button>
+        </form>
+        <div class="comments" v-for="comment in comments" v-bind:key="comment.postId" > 
+          <div v-if="comment.postId == post.id_post" class="comment_id"> 
+            <div class="commentaire">
+            <router-link :to="{ name: 'User', params: { userId : comment.userId } } ">
+              <img class="comment__photo" v-bind:src="comment.photo" crossorigin>
+            </router-link>
+              <div class="comment__block">
+                <div class="comment__info">
+                  <div class="comment__pseudo"> {{ comment.pseudo }} 
+                    <span class="comment__date"> {{ formatDate(comment.date_comment) }} </span>
+                  </div>
+                  <div class="comment__moderate">
+                      <fa v-if="comment.userId == userId || admin == true" class="delete__post" icon="trash" @click="deleteComment(comment.id_comment, comment.userId)"/> 
+                  </div>
                 </div>
-              </div>
-              <div class="comment__post">
-                <p class="comment__comment"> {{ comment.comment }} </p>
+                <div class="comment__post">
+                  <p class="comment__comment"> {{ comment.comment }} </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
+
+  <div v-else class="no__posts"> Aucun post pour le moment. </div>
+  <div class="post__footer"></div>
 
 <modify v-bind:visible="visible" v-bind:modify_view="modify_view"></modify>
 
@@ -139,6 +144,7 @@ export default {
         comment: null,
       },
       visible: false,
+      displayPost: null,
     }
   },
   computed:{
@@ -213,6 +219,7 @@ export default {
       .then(response => {
         this.data = response.data.result;
         this.posts = (JSON.parse(JSON.stringify(this.data)));
+        this.displayPost = this.posts[0];
       })
       .catch(error => {
         if(error.response && error.response.status === 401) {
@@ -455,16 +462,19 @@ section {
   font-weight: 600;
 }
 
+#file__create {
+    cursor: pointer;
+}
+
 .form__valid {
   display: flex;
   width: 100%;
   justify-content: center;
-  
 }
 
 .valid__post {
    border-style: none;
-   width: 40%;
+   width: 90px;
    height: 30px;
    font-weight: 600;
    color: #312F2F;
@@ -484,10 +494,18 @@ button:disabled {
   color: black;
 }
 
+.no__posts {
+  display: flex;
+  margin-top:100px;
+  margin-bottom: 120px;
+  justify-content: center;
+  width: 100%;
+}
+
 .post {
   display:flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .profil__post{
@@ -577,21 +595,22 @@ button:disabled {
   height: 100% ;
 }
 
+.post__footer {
+  margin-top: 100px;
+}
+
 //Commentaires
 
 .comment_id {
   display: flex;
 }
 
-.fa-comments {
-  color:rgb(50, 91, 226);
-}
-
 .comment__status {
   margin: 10px 10px 0px 10px;
+  font-weight: 300;
   font-style: italic;
-  font-size: 15px;
-  color: #312F2F;
+  font-size: 16px;
+  color: #a1a1a1;
 }
 
 .new__comment {
@@ -651,22 +670,26 @@ button:disabled {
 .comment__block {
   display: flex;
   flex-direction: column;
-  min-width: 40%;
   border-radius: 25px;
   width: auto;
-  background-color: #eeeeee;
-  box-shadow: 1px 1px 1px 1px #D3D3D3;
+  background-color: #f2f2f2;
   margin-left: 10px;
   margin-right: 10px;
   padding-left: 10px;
   padding-right: 10px;
-  &:hover {
-    box-shadow: 2px 2px 2px 2px #D2F1E4;
-	}; 
 };
 
 .comment__pseudo {
+  display: flex;
+  flex-direction: column;
   font-weight: 500;
+}
+
+.comment__date {
+  margin-top: 5px;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 13px;
 }
 
 .fa-trash {
@@ -684,7 +707,7 @@ button:disabled {
   justify-content: space-between;
   align-items: center;
   margin-left: 10px;
-  height: 55px;
+  height: 60px;
   width: 100%;
 }
 
@@ -692,8 +715,8 @@ button:disabled {
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  object-fit: cover;
   margin-top: 5px;
+  object-fit: cover;
   &:hover{
     box-shadow: 1px 1px 1px 1px #D3D3D3;
     transform: scale(1.04);
@@ -711,9 +734,11 @@ button:disabled {
   display: flex;
   align-items: center;
   margin-top: auto;
+  margin-top: 6px;
   margin-left: 10px;
   margin-right: 10px;
   width: 95%;
+  font-size: 15px;
 }
 
 // média queries
@@ -738,6 +763,18 @@ button:disabled {
 
 #comment__create {
   width: 80%;
+}
+
+#text__create {
+  width: 80%;
+}
+
+.comment__date {
+  font-size: 11px;
+}
+
+.comment__moderate {
+  width: 45px;
 }
 
 };

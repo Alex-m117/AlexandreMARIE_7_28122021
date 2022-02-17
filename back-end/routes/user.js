@@ -1,3 +1,4 @@
+// Routes liées à l'utilisateur du site.
 const express = require ('express');
 const router = express.Router();
 

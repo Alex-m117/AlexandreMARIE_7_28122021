@@ -4,7 +4,11 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const result = dotenv.config();
 const data = bdd.database();
+const now = new Date();
+const jsonDate = now.toJSON();
+const dateCreate= new Date(jsonDate);
 
+// Création du post.
 exports.createPost = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
@@ -18,7 +22,7 @@ exports.createPost = (req, res, next) => {
         res.status(404).json ({ message: "Récupération de l'userId impossible !" });
         return;
       }
-    
+
     if(req.file) {
       imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
     }
@@ -26,16 +30,13 @@ exports.createPost = (req, res, next) => {
       imageUrl = null;
     }
 
-    var now = new Date();
-    var jsonDate = now.toJSON();
-    var dateCreate= new Date(jsonDate);
-
     const post = ({
       message: req.body.message,
       image: imageUrl, 
       date_message : dateCreate,
       userId: userId,      
     })
+
     const sql = `INSERT INTO posts SET ?`;
     data.query(sql, [post],(err, result) => {
       if (err)  {console.log(err)
@@ -52,6 +53,7 @@ exports.createPost = (req, res, next) => {
   };
 };
 
+// Récupération d'un post.
 exports.getOnePost = (req, res, next) => {
 
   const { id } = req.params;
@@ -65,6 +67,7 @@ exports.getOnePost = (req, res, next) => {
   });
 };
 
+// Récupération de tous les posts
 exports.getAllPosts = (req, res, next) => {
 
   const { id } = req.params;
@@ -74,11 +77,12 @@ exports.getAllPosts = (req, res, next) => {
       res.status(404).json ({ message: "Récupération des posts impossible !" });
       return;
     }
-
       res.status(200).json ({ result }); 
   });
 };
 
+// Modification d'un post avec ou sans fichier multimédia et suppression des fichiers obsolètes.
+// Seul le créateur de la ressource ou l'administrateur peut modifier le post.
 exports.modifyPost = (req, res, next) => {
   
   const userId = token.tokenUserId(req);
@@ -96,13 +100,10 @@ exports.modifyPost = (req, res, next) => {
           })
         }
       };  
-     
+      
       if(req.file) {
 
         imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        var now = new Date();
-        var jsonDate = now.toJSON();
-        var dateCreate= new Date(jsonDate);
 
         const modify1 = {
           message: req.body.message,
@@ -120,9 +121,6 @@ exports.modifyPost = (req, res, next) => {
         });
       }
       else if (!req.file) {
-        var now = new Date();
-        var jsonDate = now.toJSON();
-        var dateCreate= new Date(jsonDate);
 
         const modify2 = {
           message: req.body.message,
@@ -146,6 +144,8 @@ exports.modifyPost = (req, res, next) => {
   });    
 }; 
 
+// Suppression du post et des éléments multimédia du post.
+// Seul le créateur de la ressource ou l'administrateur peut supprimer le post.
 exports.deletePost = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
@@ -184,14 +184,11 @@ exports.deletePost = (req, res, next) => {
   });
 };
 
+// Création d'un commentaire lié à un post.
 exports.createComment = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
   const { id } = req.params;
-
-  var now = new Date();
-  var jsonDate = now.toJSON();
-  var dateCreate= new Date(jsonDate);
 
   const commentaire = ({
       comment: req.body.comment,
@@ -210,6 +207,7 @@ exports.createComment = (req, res, next) => {
   }); 
 };
 
+// Récupération de tous les commentaires.
 exports.getAllComments = (req, res, next) => {
 
   const { id } = req.params;
@@ -223,36 +221,8 @@ exports.getAllComments = (req, res, next) => {
   });
 };
 
-exports.modifyComment = (req, res, next) => {
-
-  const userId = token.tokenUserId(req);
-  const { id } = req.params;
-
-  const select = `SELECT * FROM comments WHERE id_comment = ?`
-  data.query(select, id,(err, result) => {
-    console.log(result[0].userId)
-    console.log(userId)
-    if (err) { console.log(err) };
-    if (result[0].userId === userId || req.admin) {
-      const {message} = req.body;
-      if (message){
-        const update = `UPDATE comments SET comment = ? WHERE id_comment = ?`;
-        data.query(update, [message, id], (err, result) => {
-            if (err) { console.log(err) };
-            if (result) {
-              res.status(201).json ({ message: "Vos modifications ont bien étaient prises en compte !" });
-              return;
-            };
-        });      
-      }; 
-    }
-    else {
-      res.status(401).json ({ message: "Impossible de modifier le commentaire." });
-      return;
-    }
-  });    
-};
-
+// Suppression du commentaire lié à un post.
+// Seul le créateur de la ressource ou l'administrateur peut supprimer le commentaire.
 exports.deleteComment = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
@@ -279,7 +249,3 @@ exports.deleteComment = (req, res, next) => {
     }
   }); 
 };
-
-
-
-

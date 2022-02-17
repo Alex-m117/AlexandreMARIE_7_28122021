@@ -1,3 +1,4 @@
+// Création des données stockées dans le token ("userId", "token", "admin").
 const jwt = require('jsonwebtoken');
 
 require('dotenv').config();

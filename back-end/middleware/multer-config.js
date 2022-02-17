@@ -1,4 +1,4 @@
-
+// Multer pour la gestion multimédia des fichiers du site (ajout et/ou modifications et suppressions dans le dossier "Images").
 const multer = require('multer');
 const fs = require('fs');
 

@@ -1,3 +1,4 @@
+// Exportation du decryptage du token pour contrôler et sécuriser d'avantage les requêtes utilisateurs.
 const jwt = require ('jsonwebtoken');
 require('dotenv').config();
 

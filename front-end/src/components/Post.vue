@@ -497,7 +497,8 @@ button:disabled {
 .no__posts {
   display: flex;
   margin-top:100px;
-  margin-bottom: 120px;
+  font-weight: 500;
+  font-size: 19px;
   justify-content: center;
   width: 100%;
 }

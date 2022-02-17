@@ -12,7 +12,6 @@
                 <div class="form__modify__post"> 
                     <input
                         v-model="modify"
-                        type="text"
                         name="modify"
                         id="text__modify"
                         placeholder="Votre nouveau post"
@@ -47,6 +46,7 @@ export default {
     data: function() {
         return {
             modify:'',
+            data: [],
         }
     },
     computed: {      
@@ -62,7 +62,7 @@ export default {
         modifyPost: function() {
             const token = localStorage.getItem("token");
             this.message = document.getElementById('text__modify').value;
-             const postId = this.$route.params.id;
+            const postId = this.$route.params.id;
             const data = new FormData();
 
             if (this.message !="") {
@@ -72,7 +72,7 @@ export default {
                 data.append("image", this.image,);
             }
             if (this.message || this.image) {
-                axios.put(`http://localhost:3000/api/post/${postId}`, data, {
+                axios.put(`http://localhost:8080/api/post/${postId}`, data, {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': "multipart/form-data",
@@ -88,9 +88,34 @@ export default {
                 })
             }
         },
+        getModify: function() {
+            const token = localStorage.getItem("token");
+            this.userId = localStorage.getItem("userId");
+            const postId = this.$route.params.id;
+
+            const tag = this;
+            axios.get(`http://localhost:8080/api/post/${postId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then(response => {
+                this.result = response.data.result;
+                this.data = (JSON.parse(JSON.stringify(this.result)));
+                this.modify = this.data[0].message;
+            })
+            .catch(error => {
+                if(error.response && error.response.status === 401) {
+                    tag.$router.push('/');
+                }
+            })
+        },
         onChange(event) {
             this.image = event.target.files[0];
         },
+    },
+    mounted() {
+        this.getModify()
     },
 };
 
@@ -179,7 +204,6 @@ h1 {
     border-radius: 20px;
     padding: 10px;
     margin-bottom: 20px;
-    cursor: pointer;
     &:hover {
         border: 2px solid #5c5c5cb9;
         box-shadow: #D2F1E4 0px 2px 4px 0px, #D2F1E4 0px 2px 16px 0px;

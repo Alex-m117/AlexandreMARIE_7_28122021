@@ -1,3 +1,4 @@
+// Password-Validator pour contrôle de la force du mot de passe saisie par l'utilisateur.
 const passwordValidator = require('password-validator')
 
 const passwordSchema = new passwordValidator();

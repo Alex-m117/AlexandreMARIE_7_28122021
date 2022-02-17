@@ -13,24 +13,24 @@
       <form @submit.prevent="Connexion" v-if="mode == 'login'" class="form__auth">
 
         <div class="form__login">
-        <input v-if="mode == 'login'"
-          v-model="email"
-          maxlength="50"
-          id="email__login" 
-          type="email"  
-          placeholder="E-mail"
-          required>
+          <input v-if="mode == 'login'"
+            v-model="email"
+            maxlength="50"
+            id="email__login" 
+            type="email"  
+            placeholder="E-mail"
+            required>
           <p v-if="errors.email && mode == 'login'" class="crtl">Email incorrect</p>
         </div>
       
         <div class="form__login">
           <input v-if="mode == 'login'"
-          v-model="password"
-          maxlength="100"
-          id="password__login" 
-          type="password" 
-          placeholder="Mot de passe"
-          required>
+            v-model="password"
+            maxlength="100"
+            id="password__login" 
+            type="password" 
+            placeholder="Mot de passe"
+            required>
           <p v-if="errors.password && mode == 'login'" class="crtl">8 caractères, 1 majuscule, 1 chiffre</p>
         </div>
 
@@ -43,34 +43,34 @@
         
         <div class="form__signup">
           <input v-if="mode == 'signup'"
-          v-model="pseudo"
-          maxlength="20"
-          id="pseudo__signup" 
-          type="pseudo"
-          placeholder="Pseudonyme"
-          required>
+            v-model="pseudo"
+            maxlength="20"
+            id="pseudo__signup" 
+            type="pseudo"
+            placeholder="Pseudonyme"
+            required>
           <p v-if="errors.pseudo && mode == 'signup'" class="crtl">Pseudo incorrect</p>
         </div>
       
         <div class="form__signup">
           <input v-if="mode == 'signup'"
-          v-model="email"
-          maxlength="50"
-          id="email__signup" 
-          type="email"  
-          placeholder="E-mail"
-          required>
+            v-model="email"
+            maxlength="50"
+            id="email__signup" 
+            type="email"  
+            placeholder="E-mail"
+            required>
           <p v-if="errors.email && mode == 'signup'" class="crtl">Email incorrect</p>
         </div>
  
         <div class="form__signup">
           <input v-if="mode == 'signup'"
-          v-model="password"
-          maxlength="100"
-          id="password__signup" 
-          type="password" 
-          placeholder="Mot de passe"
-          required>
+            v-model="password"
+            maxlength="100"
+            id="password__signup" 
+            type="password" 
+            placeholder="Mot de passe"
+            required>
           <p v-if="errors.password && mode == 'signup'" class="crtl">8 caractères, 1 majuscule, 1 chiffre</p>
         </div>
   
@@ -143,9 +143,6 @@ export default {
       (this.errors.email = false) : (this.errors.email = true);
       regexPassword.test(this.password) ? 
       (this.errors.password = false) : (this.errors.password = true);
-      console.log(regexPseudo.test(this.pseudo))
-      console.log(regexEmail.test(this.email))
-      console.log(regexPassword.test(this.password))
       return ( 
         regexPseudo.test(this.pseudo) &&
         regexEmail.test(this.email) &&
@@ -162,8 +159,6 @@ export default {
       (this.errors.email = false) : (this.errors.email = true);
       regexPassword.test(this.password) ? 
       (this.errors.password = false) : (this.errors.password = true);
-      console.log(regexPassword.test(this.password))
-      console.log(regexEmail.test(this.email))
       return ( 
         regexEmail.test(this.email) &&
         regexPassword.test(this.password)

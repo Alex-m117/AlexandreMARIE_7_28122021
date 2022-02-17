@@ -6,7 +6,9 @@ const dotenv = require('dotenv');
 const result = dotenv.config();
 const data = bdd.database();
 
+// Création d'un nouvel utilisateur.
 exports.signup = async (req, res, next) => {
+
   try {
     const hash = await bcrypt.hash(req.body.password, 10);
     const user = ({
@@ -44,6 +46,7 @@ exports.signup = async (req, res, next) => {
   };
 };
 
+// Authentification de l'utilisateur et génération du token.
 exports.login = (req, res, next) => {
   try{
     
@@ -86,6 +89,7 @@ exports.login = (req, res, next) => {
   };
 };
 
+// Récupération d'un compte utilisateur.
 exports.getAccount = (req, res, next) => {
 
   const { id } = req.params;
@@ -102,6 +106,8 @@ exports.getAccount = (req, res, next) => {
   });
 };
 
+// Modification avec ou sans changement de la photo de profil de chaque données d'un utilisateur.
+// Seul l'utilisateur ou un compte administrateur peut modifier les informations de celui-ci.
 exports.updateAccount = (req, res, next) => {
   
   const { id } = req.params;
@@ -174,6 +180,8 @@ exports.updateAccount = (req, res, next) => {
       res.status(201).json ({ message: "Vos modifications ont bien étaient prises en compte !" });
 };
 
+// Suppression de l'utilisateur de la base de données, de ses intéractions et de ses fichiers média du site.
+// Seul l'utilisateur du compte ou un administrateur peut être autorisé à effectuer la suppression de celui-ci (confirmation necessaire).
 exports.deleteAccount = (req, res, next) => {
 
   const { id } = req.params;

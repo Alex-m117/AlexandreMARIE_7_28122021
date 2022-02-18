@@ -25,8 +25,8 @@ A la racine du dossier back-end via le terminal saisissez `run npm install` si w
 
 Ouvrir MySql via l'invite de commande ou le terminal puis effectuer ces deux lignes de commandes après avoir authentifié votre compte root (mysql -u root -p)en indiquant dans le fichier .env vos informations: 
 
-CREATE DATABASE groupomania;
-USE groupomania;
+- CREATE DATABASE groupomania;
+- USE groupomania;
 
 Importer le fichier groupomania.sql (qui se trouve dans le dossier database).
 
@@ -74,8 +74,8 @@ Une fois l'utilisateur connecté il peut effectuer plusieurs opérations:
 Un compte Administrateur est présent pour pouvoir modifier les informations mentionnées ci-dessus (posts, commentaires, utilisateurs).
 Il est possible de le connecter avec les informations suivantes pour les tests: 
 
-Compte - "admin@groupomania.com".
-Mot de passe - "GroupomaniaP7".
+- Compte = "admin@groupomania.com".
+- Mot de passe = "GroupomaniaP7".
 
 Pour tester d'avantage l'application il est recommandé de créer un nouveau compte utilisateur (nottament pour tester la suppression d'un compte non admin.).
 

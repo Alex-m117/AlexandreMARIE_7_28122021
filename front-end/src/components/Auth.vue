@@ -136,7 +136,7 @@ export default {
       const regexEmail = new RegExp ("^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([_\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
       const regexPseudo = new RegExp ("^([a-zA-Z0-9-_ ]{2,30})$");
       //eslint-disable-next-line
-      const regexPassword = new RegExp ("(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}");
+      const regexPassword = new RegExp ("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,30})$");
       regexPseudo.test(this.pseudo) ? 
       (this.errors.pseudo = false) : (this.errors.pseudo = true);
       regexEmail.test(this.email) ? 
@@ -153,7 +153,7 @@ export default {
       //eslint-disable-next-line
       const regexEmail = new RegExp ("^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([_\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
       //eslint-disable-next-line
-      const regexPassword = new RegExp ("(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}");
+      const regexPassword = new RegExp ("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,30})$");
      
       regexEmail.test(this.email) ? 
       (this.errors.email = false) : (this.errors.email = true);

@@ -11,8 +11,7 @@ export default {
   name : 'Home',
   components : { 
     Post,
-    },
-    
+  },
   data: function() {
     return {
     connected: true,

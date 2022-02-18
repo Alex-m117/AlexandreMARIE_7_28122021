@@ -4,9 +4,6 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const result = dotenv.config();
 const data = bdd.database();
-const now = new Date();
-const jsonDate = now.toJSON();
-const dateCreate= new Date(jsonDate);
 
 // Création du post.
 exports.createPost = (req, res, next) => {
@@ -29,6 +26,9 @@ exports.createPost = (req, res, next) => {
     else {
       imageUrl = null;
     }
+    var now = new Date();
+    var jsonDate = now.toJSON();
+    var dateCreate= new Date(jsonDate);
 
     const post = ({
       message: req.body.message,
@@ -108,7 +108,6 @@ exports.modifyPost = (req, res, next) => {
         const modify1 = {
           message: req.body.message,
           image: imageUrl, 
-          date_message : dateCreate,
         };
   
         const update = `UPDATE posts SET ? WHERE id_post = ?`;
@@ -124,7 +123,6 @@ exports.modifyPost = (req, res, next) => {
 
         const modify2 = {
           message: req.body.message,
-          date_message : dateCreate,
         };
   
         const update = `UPDATE posts SET ? WHERE id_post = ?`;
@@ -189,6 +187,10 @@ exports.createComment = (req, res, next) => {
 
   const userId = token.tokenUserId(req);
   const { id } = req.params;
+
+  var now = new Date();
+  var jsonDate = now.toJSON();
+  var dateCreate= new Date(jsonDate);
 
   const commentaire = ({
       comment: req.body.comment,

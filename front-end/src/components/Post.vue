@@ -331,7 +331,7 @@ export default {
     },
     modify_view: function() {
       this.visible = !this.visible
-    }
+    },
   },
   mounted() {
     const token = localStorage.getItem("token");
@@ -407,7 +407,8 @@ section {
 .invisible {
   display: none;
 }
-// créer un post
+
+// Créer un post
 
 .create__post {
   display: flex;
@@ -742,7 +743,7 @@ button:disabled {
   font-size: 15px;
 }
 
-// média queries
+// Média Queries
 
 @media (min-width: 280px) and (max-width: 550px) {
 

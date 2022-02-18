@@ -18,7 +18,8 @@
                     />
                 </div>
                 <div class="modify__file"> 
-                    <input class="file"
+                    <input 
+                        class="file"
                         @change="onChange"
                         ref="file"
                         type="file"
@@ -81,6 +82,7 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
+                    document.getElementById('text__modify').value = null;
                     this.$router.go();
                 })
                 .catch(error => {
@@ -88,34 +90,9 @@ export default {
                 })
             }
         },
-        getModify: function() {
-            const token = localStorage.getItem("token");
-            this.userId = localStorage.getItem("userId");
-            const postId = this.$route.params.id;
-
-            const tag = this;
-            axios.get(`http://localhost:8080/api/post/${postId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then(response => {
-                this.result = response.data.result;
-                this.data = (JSON.parse(JSON.stringify(this.result)));
-                this.modify = this.data[0].message;
-            })
-            .catch(error => {
-                if(error.response && error.response.status === 401) {
-                    tag.$router.push('/');
-                }
-            })
-        },
         onChange(event) {
             this.image = event.target.files[0];
         },
-    },
-    mounted() {
-        this.getModify()
     },
 };
 

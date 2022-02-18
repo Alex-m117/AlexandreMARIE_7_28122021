@@ -74,7 +74,7 @@
           <p v-if="errors.password && mode == 'signup'" class="crtl">8 caractères, 1 majuscule, 1 chiffre</p>
         </div>
   
-        <p v-if="invalid.signup == true && mode == 'signup'" class="account__error"> <fa icon="exclamation"/> Email déjà utilisé </p>
+        <p v-if="invalid.signup == true && mode == 'signup'" class="account__error"> Email déjà utilisé </p>
 
           <button :disabled="!valideForm" class="validSignup" v-if="mode == 'signup' " @click="signup()"> Inscription </button>
       </form>
@@ -204,27 +204,25 @@ export default {
           password: tag.password,
         }
         axios.post('http://localhost:3000/api/user/signup', signup)
-          .then(response => {
-            console.log(response)
-            axios.post('http://localhost:3000/api/user/login', login)
-              .then(response => {
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('userId', response.data.userId);
-                localStorage.setItem('admin', response.data.admin);
-                tag.$router.push('Home');
-                console.log(response);
-              })
-              .catch(error => {
-                console.log(error)
-                 if(error.response.status === 403) {
-                  this.invalid.login = true
-                 }
-              })
-          .catch( function(error) {
-            if(error.response.status === 403) {
-              this.invalid.signup = true
-            }
-          })
+        .then(response => {
+          console.log(response)
+          axios.post('http://localhost:3000/api/user/login', login)
+            .then(response => {
+              localStorage.setItem('token', response.data.token);
+              localStorage.setItem('userId', response.data.userId);
+              localStorage.setItem('admin', response.data.admin);
+              tag.$router.push('Home');
+            })
+            .catch(error => {
+              if(error.response.status === 403) {
+                this.invalid.login = true;
+              }
+            })
+        })    
+        .catch(error => {
+          if(error.response.status === 403) {
+            this.invalid.signup = true;
+          }
         })
       }
     }, 
@@ -248,7 +246,6 @@ main {
   height: 100%;
   z-index: -1;
 }
-
 
 .form {
   display:flex;

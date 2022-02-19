@@ -5,7 +5,7 @@
 
     <div class="user__header">
       <div class="user__return">
-        <router-link :to="('/home')">
+        <router-link :to="('/home')" title="Home">
           <fa icon="arrow-circle-left" class="icon__return"/>
         </router-link>
         <button v-if=" userId == userId_crtl || admin == true" class="delete__user" @click="deleteUser()">
@@ -28,12 +28,14 @@
       <div class="user__profil">
         <div class="photo__block">
           <div class="user__photo">
-          <img class="user__pic" v-bind:src="this.userParams[0].photo" crossorigin>
+          <img class="user__pic" v-bind:src="this.userParams[0].photo" alt="Photo de profil" crossorigin>
             <form v-if=" userId == userId_crtl || admin == true" @submit.prevent="Modifier" class="modify__pic">
               <input
                 @change="onChange"
                 type="file"
                 name="image"
+                title="file__image"
+                aria-describedby="modify__photo"
                 id="modify__photo"
                 />
               <button class="modify__photo" @click="modifyPic()" > Modifier </button>

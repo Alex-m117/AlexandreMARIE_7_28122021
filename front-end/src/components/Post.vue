@@ -3,10 +3,12 @@
 <section>
 
   <div class="navbar">
+
     <div class="home__control">
-      <router-link :to="{ name: 'User', params: { userId : userId } } ">
-        <img class="profil__home" v-bind:src="user.photo" crossorigin>
-      </router-link>
+      <h1 class="profil__title"> {{ user.pseudo }} </h1>
+        <router-link :to="{ name: 'User', params: { userId : userId } }" title="userId" >
+          <img class="profil__home" v-bind:src="user.photo" alt="Photo de profil" crossorigin>
+        </router-link>
       <fa icon="sign-out-alt" @click="logOut()" />
     </div>
   </div>
@@ -28,7 +30,9 @@
           @change="onChange"
           ref="file"
           type="file"
+          title="fichier"
           name="image"
+          aria-describedby="file__create"
           id="file__create"
           accept="image/png, image/jpeg, image/gif"
         />
@@ -44,14 +48,14 @@
       <div class="profil__post">
         <div class="profil__info">
         <router-link :to="{ name: 'User', params: { userId : post.userId } } ">
-          <img class="profil__pic" v-bind:src="post.photo" crossorigin>
+          <img class="profil__pic" v-bind:src="post.photo" alt="Photo de profil" crossorigin>
         </router-link>
           <div class="profil__author">
             <span class="profil__pseudo"> {{ post.pseudo }} </span>
             <span class="profil__date"> {{ formatDate(post.date_message) }} </span>
           </div>
           <div class="post__moderate">
-            <router-link :to="{ params: { id : post.id_post } } ">
+            <router-link :to="{ params: { id : post.id_post } }" title="postId" >
               <fa v-if="post.userId == userId || admin == true" class="modify__post" icon="edit" @click="modify_view()" />
             </router-link>
               <fa v-if="post.userId == userId || admin == true" class="delete__post" icon="trash" @click="deletePost(post.id_post, post.userId)"/>
@@ -61,7 +65,7 @@
           <span class="post__message"> {{ post.message }} </span>
         </div>
         <div v-if="post.image" class="display__image">
-          <span class="post__image"> <img v-bind:src="post.image" class="image" crossorigin> </span>
+          <span class="post__image"> <img v-bind:src="post.image" class="image" alt="Image de la publication" crossorigin> </span>
         </div>
         <div class="post__comment"> 
           <div class="comment__status">
@@ -88,7 +92,7 @@
           <div v-if="comment.postId == post.id_post" class="comment_id"> 
             <div class="commentaire">
             <router-link :to="{ name: 'User', params: { userId : comment.userId } } ">
-              <img class="comment__photo" v-bind:src="comment.photo" crossorigin>
+              <img class="comment__photo" v-bind:src="comment.photo" alt="Photo de profil" crossorigin>
             </router-link>
               <div class="comment__block">
                 <div class="comment__info">
@@ -384,6 +388,14 @@ section {
   width: 90%;
 }
 
+.profil__title {
+  margin-right: 10px;
+  font-size: 16px;
+  color: #666666;
+  font-style: italic;
+  font-weight: 500;
+}
+
 .fa-user {
   font-size: 30px;
 }
@@ -549,7 +561,7 @@ button:disabled {
 
 .profil__date {
   font-style: italic;
-  color:#a1a1a1;
+  color:#666666;
 }
 
 .post__moderate {
@@ -612,7 +624,7 @@ button:disabled {
   font-weight: 300;
   font-style: italic;
   font-size: 16px;
-  color: #a1a1a1;
+  color: #666666;
 }
 
 .new__comment {

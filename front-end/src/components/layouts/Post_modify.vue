@@ -24,6 +24,8 @@
                         ref="file"
                         type="file"
                         name="image"
+                        title="file_modify"
+                        aria-describedby="file__modify"
                         id="file__modify"
                         accept="image/png, image/jpeg, image/gif"
                     />

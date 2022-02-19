@@ -23,7 +23,7 @@ A la racine du dossier back-end via le terminal saisissez `run npm install` si w
 - DB_PORT = "Port par defaut de votre base de données (à configurer)"
 - JWT_KEY_TOKEN = "Votre token secret (Chaine de caractère à insérer via générateur de mot de passe recommandé)"
 
-Ouvrir MySql via l'invite de commande ou le terminal puis effectuer ces deux lignes de commandes après avoir authentifié votre compte root (mysql -u root -p)en indiquant dans le fichier .env vos informations: 
+Ouvrir MySql via l'invite de commande ou le terminal puis effectuer ces deux lignes de commandes après avoir authentifié votre compte root (mysql -u root -p) en indiquant dans le fichier .env vos informations: 
 
 - CREATE DATABASE groupomania;
 - USE groupomania;

@@ -88,7 +88,7 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `photo` varchar(255) DEFAULT NULL,
-  `biography` varchar(500) DEFAULT 'Oups ! Cette section est vide...',
+  `biography` varchar(255) DEFAULT 'Oups ! Cette section est vide...',
   `admin` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=272 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

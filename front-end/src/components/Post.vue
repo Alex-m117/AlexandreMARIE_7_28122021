@@ -245,7 +245,7 @@ export default {
         },
       })
       .then(response => {
-        console.log(response, "post supprimé")
+        console.log(response)
         this.getComment();
       })
       .catch(error => {
@@ -319,7 +319,7 @@ export default {
         },
       })
       .then(response => {
-        console.log(response, "post supprimé")
+        console.log(response)
         this.getComment();
       })
       .catch(error => {
